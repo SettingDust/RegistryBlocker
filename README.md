@@ -1,12 +1,14 @@
-## Feature
- - Only develop fabric but targeting quilt and forge(with Connector) as well with testing modules. 
- - Self updating template with GitHub action
- - SemVer and Conventional Commit for Git stuffs and generating changelog
- - Spotless for code styling
- - Git hook for spotless apply, check and conventional commit validation
- - Version catalog with Kotlin Script in settings.gradle.kts
- - Automate publish with mc-publish action. *Need configure secrets for platform
- - Auto checking dependencies version with dependabot
+Change config in `config/registry-blocker.json`.   
+The key is registry identifier, the value is entry identifier.  
+Config should reload when reloading data packs.
+Recommend use with https://modrinth.com/mod/data-dumper to dump matched registry with tag or regex
 
-## Usage
-Use this template and type in the name, description. The GitHub action will provide a repo with correct metadata
+### Example
+```json5
+{
+    // Since https://github.com/misode/mcmeta/blob/data-json/data/minecraft/worldgen/structure_set/pillager_outposts.json#L6 is requiring this entry. The world won't load
+    "minecraft:worldgen/structure_set": [
+        "minecraft:villages"
+    ]
+}
+```

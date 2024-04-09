@@ -15,23 +15,15 @@ val description: String by rootProject.properties
 base.archivesName = name
 
 loom {
-    splitEnvironmentSourceSets()
-
     mixin {
         defaultRefmapName = "$id.refmap.json"
 
         add("main", "$id.refmap.json")
-        add("client", "$id.client.refmap.json")
     }
 
     accessWidenerPath = file("src/main/resources/$id.accesswidener")
 
-    mods {
-        register(id) {
-            sourceSet(sourceSets["main"])
-            sourceSet(sourceSets["client"])
-        }
-    }
+    mods { register(id) { sourceSet(sourceSets["main"]) } }
 
     runs {
         configureEach { ideConfigGenerated(true) }
@@ -48,8 +40,8 @@ dependencies {
     modImplementation(catalog.fabric.api)
     modImplementation(catalog.fabric.kotlin)
 
-    val modClientImplementation by configurations
-    modClientImplementation(catalog.modmenu)
+    modImplementation(catalog.kinecraft.serialization)
+    include(catalog.kinecraft.serialization)
 }
 
 kotlin { jvmToolchain(17) }
