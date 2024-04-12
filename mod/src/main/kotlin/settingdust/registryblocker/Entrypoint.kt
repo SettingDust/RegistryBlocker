@@ -14,10 +14,13 @@ import kotlinx.serialization.modules.contextual
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.util.Identifier
+import org.apache.logging.log4j.LogManager
 import settingdust.kinecraft.serialization.ResourceLocationStringSerializer
 
 object RegistryBlocker {
     const val ID = "registry-blocker"
+
+    @JvmField val LOGGER = LogManager.getLogger()
 }
 
 private val json = Json {
