@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
@@ -34,8 +33,8 @@ private val configPath =
 
 var config = json.decodeFromStream<Map<Identifier, Set<Identifier>>>(configPath.inputStream())
 
-fun init() {
-    ServerLifecycleEvents.START_DATA_PACK_RELOAD.register { _, _ ->
-        config = json.decodeFromStream(configPath.inputStream())
-    }
+fun reload() {
+    config = json.decodeFromStream(configPath.inputStream())
 }
+
+fun init() {}
