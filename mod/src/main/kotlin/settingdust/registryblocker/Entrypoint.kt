@@ -12,6 +12,8 @@ import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.registry.RegistryKey
+import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.util.Identifier
 import org.apache.logging.log4j.LogManager
 import settingdust.kinecraft.serialization.ResourceLocationStringSerializer
@@ -38,3 +40,13 @@ fun reload() {
 }
 
 fun init() {}
+
+fun <T> MutableMap<T, RegistryEntry.Reference<T>>.removeIntrusiveValues(
+    blocked: Map<RegistryKey<T>, T>
+) {
+    for ((key, _) in this) {
+        if (blocked.containsValue(key)) {
+            remove(key)
+        }
+    }
+}
