@@ -27,13 +27,6 @@ jobs:
           token: ${{ github.token }}
           tag: ${{ github.ref_name }}
 
-      - name: Commit CHANGELOG.md
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          branch: main
-          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
-          file_pattern: CHANGELOG.md
-
       - name: Upload jar
         uses: Kir-Antipov/mc-publish@v3.3.0
         with:
@@ -66,3 +59,11 @@ jobs:
 
           java: |
             21
+
+
+      - name: Commit CHANGELOG.md
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: main
+          commit_message: 'docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]'
+          file_pattern: CHANGELOG.md
