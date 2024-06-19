@@ -6,13 +6,7 @@ apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/kotlin.gra
 
 apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/fabric.gradle.kts")
 
-apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/neoforge.gradle.kts")
-
 apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/modmenu.gradle.kts")
-
-apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/vanillagradle.gradle.kts")
-
-apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/mixin.gradle.kts")
 
 dependencyResolutionManagement.versionCatalogs.named("catalog") {}
 
