@@ -1,4 +1,9 @@
 
+## [0.4.0] - 2024-06-19
+### :recycle: Refactors
+- [`7f0dbc6`](https://github.com/SettingDust/RegistryBlocker/commit/7f0dbc654a0aaf0a8967a93b65b0f5d5aa178ee7) - port to 1.21 *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.3.0] - 2024-06-03
 ### :sparkles: New Features
 - [`9be1c72`](https://github.com/SettingDust/RegistryBlocker/commit/9be1c72dc1739aa8b9fb2ff31bea6f69073a4bb4) - support removing blocked intrusive values *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -27,3 +32,4 @@
 [0.2.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.1.0...0.2.0
 [0.2.1]: https://github.com/SettingDust/RegistryBlocker/compare/0.2.0...0.2.1
 [0.3.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.2.1...0.3.0
+[0.4.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.3.0...0.4.0
