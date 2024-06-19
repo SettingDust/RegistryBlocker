@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import settingdust.registryblocker.EntrypointKt;
+import settingdust.registryblocker.RegistryBlocker;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -15,6 +16,6 @@ public class DataPackContentsMixin {
     private static void registryblocker$reload(
         final CallbackInfoReturnable<CompletableFuture<DataPackContents>> cir
     ) {
-        EntrypointKt.reload();
+        RegistryBlocker.INSTANCE.reload();
     }
 }

@@ -2,41 +2,41 @@
 
 package settingdust.registryblocker
 
+import com.mojang.serialization.JsonOps
 import kotlin.io.path.div
 import kotlin.io.path.exists
-import kotlin.io.path.inputStream
+import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.entry.RegistryEntry
 import net.minecraft.util.Identifier
+import net.minecraft.util.JsonHelper
 import org.apache.logging.log4j.LogManager
-import settingdust.kinecraft.serialization.ResourceLocationStringSerializer
+import org.quiltmc.qkl.library.serialization.CodecFactory
 
 object RegistryBlocker {
     const val ID = "registry-blocker"
 
     @JvmField val LOGGER = LogManager.getLogger()
-}
 
-private val json = Json {
-    serializersModule = SerializersModule { contextual(ResourceLocationStringSerializer) }
-}
+    val configPath =
+        (FabricLoader.getInstance().configDir / "$ID.json").also {
+            if (!it.exists()) it.writeText("{}")
+        }
 
-private val configPath =
-    (FabricLoader.getInstance().configDir / "${RegistryBlocker.ID}.json").also {
-        if (!it.exists()) it.writeText("{}")
+    val CONFIG_CODEC = codecFactory.create<Map<Identifier, Set<Identifier>>>()
+    var config =
+        CONFIG_CODEC.parse(JsonOps.INSTANCE, JsonHelper.deserialize(configPath.readText())).orThrow
+
+    fun reload() {
+        config = CONFIG_CODEC.parse(JsonOps.INSTANCE, JsonHelper.deserialize(configPath.readText())).orThrow
     }
+}
 
-var config = json.decodeFromStream<Map<Identifier, Set<Identifier>>>(configPath.inputStream())
-
-fun reload() {
-    config = json.decodeFromStream(configPath.inputStream())
+private val codecFactory = CodecFactory {
+    codecs { unnamed(Identifier.CODEC) }
 }
 
 fun init() {}

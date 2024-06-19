@@ -1,10 +1,10 @@
 package settingdust.registryblocker.mixin;
 
-import com.mojang.serialization.Lifecycle;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryInfo;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,13 +34,13 @@ public abstract class SimpleRegistryMixin<T> {
     @Inject(method = "add", at = @At("HEAD"), cancellable = true)
     private void registryblocker$filterRegistries(
         final RegistryKey<T> key,
-        final T entry,
-        final Lifecycle lifecycle,
-        final CallbackInfoReturnable<RegistryEntry.Reference<?>> cir
+        final T value,
+        final RegistryEntryInfo info,
+        final CallbackInfoReturnable<RegistryEntry.Reference<T>> cir
     ) {
-        if (EntrypointKt.getConfig().containsKey(this.key.getValue())
-            && EntrypointKt.getConfig().get(key.getRegistry()).contains(key.getValue())) {
-            registryblocker$blocked.put(key, entry);
+        if (RegistryBlocker.INSTANCE.getConfig().containsKey(this.key.getValue())
+            && RegistryBlocker.INSTANCE.getConfig().get(key.getRegistry()).contains(key.getValue())) {
+            registryblocker$blocked.put(key, value);
             RegistryBlocker.LOGGER.debug("[SimpleRegistry#add] Blocking registry entry: {}", key);
             cir.setReturnValue(null);
         }
