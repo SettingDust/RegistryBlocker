@@ -1,5 +1,3 @@
-@file:OptIn(ExperimentalSerializationApi::class)
-
 package settingdust.registryblocker
 
 import com.mojang.serialization.JsonOps
@@ -7,7 +5,6 @@ import kotlin.io.path.div
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
-import kotlinx.serialization.ExperimentalSerializationApi
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.registry.RegistryKey
 import net.minecraft.registry.entry.RegistryEntry
@@ -28,10 +25,12 @@ object RegistryBlocker {
 
     val CONFIG_CODEC = codecFactory.create<Map<Identifier, Set<Identifier>>>()
     var config =
-        CONFIG_CODEC.parse(JsonOps.INSTANCE, JsonHelper.deserialize(configPath.readText())).orThrow
+        CONFIG_CODEC.parse(JsonOps.INSTANCE, JsonHelper.deserialize(configPath.readText())).result()
+            .orElseThrow()
 
     fun reload() {
-        config = CONFIG_CODEC.parse(JsonOps.INSTANCE, JsonHelper.deserialize(configPath.readText())).orThrow
+        config = CONFIG_CODEC.parse(JsonOps.INSTANCE, JsonHelper.deserialize(configPath.readText()))
+            .result().orElseThrow()
     }
 }
 

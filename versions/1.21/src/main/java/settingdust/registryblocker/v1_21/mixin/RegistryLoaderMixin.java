@@ -1,4 +1,4 @@
-package settingdust.registryblocker.mixin;
+package settingdust.registryblocker.v1_21.mixin;
 
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Decoder;

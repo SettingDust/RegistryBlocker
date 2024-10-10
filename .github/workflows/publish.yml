@@ -38,8 +38,8 @@ jobs:
 
           # Only include this section if you wish to publish
           # your assets on CurseForge.
-#          curseforge-id: 890349
-#          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          curseforge-id: 1118861
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files: |
             build/libs/!(*-@(dev|sources|javadoc)).jar
@@ -51,13 +51,15 @@ jobs:
             fabric
 
           game-versions: |
-            [1.21,)
+            [1.20.1, 1.22)
           game-version-filter: releases
 
           dependencies: |
+            kinecraft-minecraft
             fabric-language-kotlin
 
           java: |
+            17
             21
 
 
