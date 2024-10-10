@@ -1,4 +1,12 @@
 
+## [0.5.0] - 2024-10-10
+### :sparkles: New Features
+- [`376cf03`](https://github.com/SettingDust/RegistryBlocker/commit/376cf03056751bfda6602290dc185fa5a3f98f8a) - working on 1.20.1 + 1.21 *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+### :wrench: Chores
+- [`9106e94`](https://github.com/SettingDust/RegistryBlocker/commit/9106e94af5f7eb71b464d217a2c48d57cae96f41) - remove unused scripts *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.4.0] - 2024-06-19
 ### :recycle: Refactors
 - [`7f0dbc6`](https://github.com/SettingDust/RegistryBlocker/commit/7f0dbc654a0aaf0a8967a93b65b0f5d5aa178ee7) - port to 1.21 *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -33,3 +41,4 @@
 [0.2.1]: https://github.com/SettingDust/RegistryBlocker/compare/0.2.0...0.2.1
 [0.3.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.2.1...0.3.0
 [0.4.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.3.0...0.4.0
+[0.5.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.4.0...0.5.0
