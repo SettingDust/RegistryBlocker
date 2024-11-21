@@ -1,4 +1,9 @@
 
+## [0.5.2] - 2024-11-20
+### :bug: Bug Fixes
+- [`e6b3c1f`](https://github.com/SettingDust/RegistryBlocker/commit/e6b3c1f460e7ca3c6f9d1c6ffd538608f6f26a17) - don't use the same refmap name *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.5.1] - 2024-10-10
 ### :bug: Bug Fixes
 - [`9dbe24d`](https://github.com/SettingDust/RegistryBlocker/commit/9dbe24dd9cad84ef1779d42a83c76632e39ce316) - wrong version range *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -48,3 +53,4 @@
 [0.4.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.3.0...0.4.0
 [0.5.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.4.0...0.5.0
 [0.5.1]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.0...0.5.1
+[0.5.2]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.1...0.5.2
