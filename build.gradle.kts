@@ -76,7 +76,6 @@ dependencies {
     modImplementation(catalog.fabric.api)
     modImplementation(catalog.fabric.kotlin)
 
-    include(catalog.kinecraft.serialization)
     modImplementation(variantOf(catalog.kinecraft.serialization) { classifier("fabric") })
 
     include(project(":versions:1.20.1"))
