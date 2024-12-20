@@ -52,13 +52,15 @@ dependencies {
     minecraft(catalog.minecraft.fabric)
     mappings(variantOf(catalog.mapping.yarn) { classifier("v2") })
 
-    implementation(project(":")) { isTransitive = false }
+    implementation(project(":", configuration = "namedElements")) { isTransitive = false }
 
     modImplementation(catalog.fabric.loader)
     modImplementation(catalog.fabric.api)
     modImplementation(catalog.fabric.kotlin)
 
     modImplementation(catalog.modmenu)
+
+    modImplementation(variantOf(catalog.kinecraft.serialization) { classifier("fabric") })
 }
 
 val metadata =

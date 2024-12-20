@@ -49,12 +49,12 @@ public abstract class SimpleRegistryMixin<T> implements BlockingRegistry<T> {
     }
 
     @Inject(method = "freeze", at = @At(value = "INVOKE", target = "Ljava/util/Map;isEmpty()Z"))
-    private void registryblocker$avoidReference(
+    private void registryblocker$removeValue(
         final CallbackInfoReturnable<Registry<T>> cir
     ) {
         if (intrusiveValueToEntry != null) {
             EntrypointKt.removeIntrusiveValues(intrusiveValueToEntry, registryblocker$blocked);
-            RegistryBlocker.LOGGER.debug("Removing a blocked intrusive registry entry {}.", key);
+            RegistryBlocker.LOGGER.debug("Removed blocked intrusive registry entries for {}.", key);
         }
     }
 }

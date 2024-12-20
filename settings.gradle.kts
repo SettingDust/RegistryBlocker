@@ -9,7 +9,10 @@ apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/fabric.gra
 apply("https://github.com/SettingDust/MinecraftGradleScripts/raw/main/modmenu.gradle.kts")
 
 dependencyResolutionManagement.versionCatalogs.named("catalog") {
+    library("fabric-loader", "net.fabricmc", "fabric-loader").version("0.16.9")
     library("minecraft-fabric-1.21", "com.mojang", "minecraft").version("1.21")
+    
+    library("kinecraft-serialization", "maven.modrinth", "kinecraft-serialization").version("1.16.1")
 }
 
 plugins {
