@@ -43,9 +43,7 @@ fun init() {}
 fun <T> MutableMap<T, RegistryEntry.Reference<T>>.removeIntrusiveValues(
     blocked: Map<RegistryKey<T>, T>
 ) {
-    for ((key, _) in this) {
-        if (blocked.containsValue(key)) {
-            remove(key)
-        }
+    for ((_, value) in blocked) {
+        remove(value)
     }
 }
