@@ -359,7 +359,7 @@ cloche {
             }
 
             dependencies {
-                modImplementation("thedarkcolour:kotlinforforge-neoforge:5.9.0")
+                modImplementation("thedarkcolour:kotlinforforge-neoforge:5.10.0")
             }
         }
 
