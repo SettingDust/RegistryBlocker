@@ -1,4 +1,9 @@
 
+## [0.7.0] - 2025-09-15
+### :sparkles: New Features
+- [`c48d6af`](https://github.com/SettingDust/RegistryBlocker/commit/c48d6af37c149ef50daee23b7ddff040a05e935e) - add support forge and neoforge *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.6.0] - 2025-09-15
 ### :recycle: Refactors
 - [`cf63aa3`](https://github.com/SettingDust/RegistryBlocker/commit/cf63aa3ee8679c23d530737af6d2efa0a75e30a8) - rewrite wit cloche *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -66,3 +71,4 @@
 [0.5.2]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.1...0.5.2
 [0.5.3]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.2...0.5.3
 [0.6.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.4...0.6.0
+[0.7.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.6.0...0.7.0
