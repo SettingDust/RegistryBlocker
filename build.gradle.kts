@@ -20,7 +20,7 @@ plugins {
     idea
 
     kotlin("jvm") version "2.0.0"
-    kotlin("plugin.serialization") version "2.0.0"
+    kotlin("plugin.serialization") version "2.2.20"
 
     id("com.palantir.git-version") version "3.1.0"
 
