@@ -1,4 +1,9 @@
 
+## [0.7.1] - 2025-09-15
+### :bug: Bug Fixes
+- [`a709918`](https://github.com/SettingDust/RegistryBlocker/commit/a70991879a52c80f1132d75accb67c7f934b1f2b) - avoid crash when blocking element *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.7.0] - 2025-09-15
 ### :sparkles: New Features
 - [`c48d6af`](https://github.com/SettingDust/RegistryBlocker/commit/c48d6af37c149ef50daee23b7ddff040a05e935e) - add support forge and neoforge *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -72,3 +77,4 @@
 [0.5.3]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.2...0.5.3
 [0.6.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.4...0.6.0
 [0.7.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.6.0...0.7.0
+[0.7.1]: https://github.com/SettingDust/RegistryBlocker/compare/0.7.0...0.7.1
