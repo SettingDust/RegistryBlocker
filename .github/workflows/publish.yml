@@ -55,7 +55,7 @@ jobs:
           game-version-filter: releases
 
           dependencies: |
-            kinecraft-minecraft
+            kinecraft-serialization
             fabric-language-kotlin
 
           java: |
