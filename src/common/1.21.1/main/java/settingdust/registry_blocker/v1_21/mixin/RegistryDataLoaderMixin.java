@@ -1,41 +1,49 @@
 package settingdust.registry_blocker.v1_21.mixin;
 
-import com.google.gson.JsonElement;
-import com.mojang.serialization.Decoder;
-import net.minecraft.core.RegistrationInfo;
+import com.google.common.collect.Iterators;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.resources.RegistryDataLoader;
-import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import settingdust.registry_blocker.RegistryBlocker;
+
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Mixin(RegistryDataLoader.class)
 public class RegistryDataLoaderMixin {
-    @Inject(
-        method = "loadElementFromResource",
+    @ModifyExpressionValue(
+        method = "loadContentsFromManager",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/server/packs/resources/Resource;openAsReader()Ljava/io/BufferedReader;"
+            target = "Ljava/util/Set;iterator()Ljava/util/Iterator;"
         )
     )
-    private static <E> void registryblocker$filterBlocked(
-        final WritableRegistry<E> par1,
-        final Decoder<E> par2,
-        final RegistryOps<JsonElement> par3,
-        final ResourceKey<E> key,
-        final Resource par5,
-        final RegistrationInfo par6,
-        final CallbackInfo ci
+    private static <E> Iterator<Map.Entry<ResourceLocation, Resource>> registryblocker$filterBlocked(
+        Iterator<Map.Entry<ResourceLocation, Resource>> original,
+        @Local(argsOnly = true) WritableRegistry<E> registry
     ) {
-        if (!RegistryBlocker.INSTANCE.getConfig().containsKey(key.registry())) return;
-        var blacklist = RegistryBlocker.INSTANCE.getConfig().get(key.registry());
-        if (!blacklist.contains(key.location())) return;
-        RegistryBlocker.LOGGER.debug("[RegistryLoader] Blocking registry entry: {}", key);
-        throw new RuntimeException("Blocked by RegistryBlocker");
+        var key = registry.key();
+        var blacklist = RegistryBlocker.INSTANCE.getConfig().get(key.location());
+        if (blacklist == null) return original;
+        return Iterators.filter(
+            original, it -> {
+                var blocked = blacklist.contains(it.getKey());
+                if (blocked) {
+                    RegistryBlocker.LOGGER.debug(
+                        "[RegistryDataLoader] Blocking registry entry: {} {}",
+                        key.location(),
+                        it
+                    );
+                }
+                return !blocked;
+            }
+        );
     }
 }

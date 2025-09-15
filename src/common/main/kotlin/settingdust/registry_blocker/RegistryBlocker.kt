@@ -15,7 +15,7 @@ import settingdust.registry_blocker.util.LoaderAdapter
 import settingdust.registry_blocker.util.ServiceLoaderUtil
 
 object RegistryBlocker {
-    const val ID = "registry-blocker"
+    const val ID = "registry_blocker"
 
     @JvmField val LOGGER = LogManager.getLogger()
 
