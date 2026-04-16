@@ -8,4 +8,6 @@ object RegistryBlockerFabric {
     }
 
     fun init() {}
+
+    fun clientInit() {}
 }

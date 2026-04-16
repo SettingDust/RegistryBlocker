@@ -9,6 +9,7 @@ class LoaderAdapter : LoaderAdapter {
     override val isClient = FabricLoader.getInstance().environmentType === EnvType.CLIENT
 
     override fun isModLoaded(modId: String) = FabricLoader.getInstance().isModLoaded(modId)
+
     override val configDir = FabricLoader.getInstance().configDir
 
     override fun onServerReload(callback: () -> Unit) {

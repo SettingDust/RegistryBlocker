@@ -1,166 +1,196 @@
+// #region Plugin Management
+
 dependencyResolutionManagement {
     pluginManagement {
         repositories {
             mavenCentral()
             gradlePluginPortal()
             maven("https://maven.msrandom.net/repository/cloche")
-            maven("https://raw.githubusercontent.com/SettingDust/cloche/refs/heads/maven-repo/")
-            maven("https://raw.githubusercontent.com/SettingDust/minecraft-codev/refs/heads/maven-repo/")
+            maven("https://raw.githubusercontent.com/settingdust/maven/main/repository/") {
+                name = "SettingDust's Maven"
+            }
             mavenLocal()
         }
     }
 }
 
-object VersionFormats {
-    val versionPlusMc = { mcVer: String, ver: String -> "$ver+$mcVer" }
-    val mcDashVersion = { mcVer: String, ver: String -> "$mcVer-$ver" }
+// #endregion
+
+// #region Multi-Version Dependency DSL
+
+fun interface ArtifactFormatter {
+    fun format(artifact: String, loader: String, mcVersion: String): String
+
+    companion object {
+        val simple = ArtifactFormatter { artifact, _, _ -> artifact }
+        val dashLoader = ArtifactFormatter { artifact, loader, _ -> "$artifact-$loader" }
+        val dashLoaderMc = ArtifactFormatter { artifact, loader, mcVersion -> "$artifact-$loader-$mcVersion" }
+    }
 }
 
-object VersionTransformers {
-    val versionDashLoader = { ver: String, variant: String, _: String -> "$ver-$variant" }
-    val loaderUnderlineVersion = { ver: String, variant: String, _: String -> "${variant}_$ver" }
-    val versionDashLoaderCommaMcVersion =
-        { ver: String, variant: String, mcVersion: String -> "$ver-$variant,$mcVersion" }
+fun interface VersionFormatter {
+    fun format(mcVer: String, version: String, loader: String): String
+
+    companion object {
+        val simple = VersionFormatter { _, version, _ -> version }
+        val dashLoader = VersionFormatter { _, version, loader -> "$version-$loader" }
+        val plusLoader = VersionFormatter { _, version, loader -> "$version+$loader" }
+        val loaderUnderscore = VersionFormatter { _, version, loader -> "${loader}_$version" }
+    }
 }
 
-object ArtifactTransformers {
-    val artifactDashLoaderDashMcVersion =
-        { artifact: String, variant: String, mcVersion: String -> "$artifact-$variant-$mcVersion" }
-    val artifactDashMcVersionDashLoader =
-        { artifact: String, variant: String, mcVersion: String -> "$artifact-$mcVersion-$variant" }
-    val artifactDashLoader = { artifact: String, variant: String, _: String -> "$artifact-$variant" }
+class LoaderVariantBuilder {
+    var artifactFormatter: ArtifactFormatter = ArtifactFormatter.simple
+    var versionFormatter: VersionFormatter = VersionFormatter.simple
+
+    fun artifact(formatter: ArtifactFormatter) {
+        artifactFormatter = formatter
+    }
+
+    fun artifact(block: (artifact: String, loader: String, mcVersion: String) -> String) {
+        artifactFormatter = ArtifactFormatter(block)
+    }
+
+    fun version(formatter: VersionFormatter) {
+        versionFormatter = formatter
+    }
+
+    fun version(block: (mcVer: String, version: String, loader: String) -> String) {
+        versionFormatter = VersionFormatter(block)
+    }
+
+    internal fun build() = LoaderVariant(artifactFormatter, versionFormatter)
 }
 
-open class VariantConfig(
-    val artifactTransformer: (artifact: String, variant: String, mcVersion: String) -> String = { artifact, _, _ -> artifact },
-    val versionTransformer: (version: String, variant: String, mcVersion: String) -> String = { ver, _, _ -> ver }
-) {
-    companion object : VariantConfig()
-}
-
-data class VariantMapping(
-    val mcVersion: String,
-    val loaders: Map<String, VariantConfig>
+data class LoaderVariant(
+    val artifactFormatter: ArtifactFormatter,
+    val versionFormatter: VersionFormatter
 )
 
-fun VersionCatalogBuilder.modrinth(
-    id: String,
-    artifact: String = id,
-    mcVersionToVersion: Map<String, String>,
-    versionFormat: (String, String) -> String = { _, v -> v },
-    mapping: List<VariantMapping> = emptyList()
-) {
-    val allLoaders = mapping.flatMap { it.loaders.keys }.toSet()
-    val isSingleLoader = allLoaders.size == 1
-    val isSingleMcVersion = mcVersionToVersion.size == 1
+class McVersionBuilder(private val mcVersion: String) {
+    private val loaders = mutableMapOf<String, LoaderVariant>()
+    var modVersion: String = ""
 
-    if (isSingleMcVersion) {
-        val (mcVersion, modVersion) = mcVersionToVersion.entries.single()
-        val config = mapping.find { it.mcVersion == mcVersion }
-            ?: error("No loader config found for MC $mcVersion")
-
-        val version = versionFormat(mcVersion, modVersion)
-
-        config.loaders.forEach { (loaderName, loader) ->
-            library(
-                if (isSingleLoader) "$id"
-                else "${id}_$loaderName",
-                "maven.modrinth",
-                loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName, mcVersion))
-        }
-        return
+    fun loader(name: String, block: LoaderVariantBuilder.() -> Unit = {}) {
+        loaders[name] = LoaderVariantBuilder().apply(block).build()
     }
 
-    mcVersionToVersion.forEach { (mcVersion, modVersion) ->
-        val config = mapping.find { it.mcVersion == mcVersion }
-            ?: error("No loader config found for MC $mcVersion")
+    internal fun build() = McVersionConfig(mcVersion, modVersion, loaders)
+}
 
-        val version = versionFormat(mcVersion, modVersion)
+data class McVersionConfig(
+    val mcVersion: String,
+    val modVersion: String,
+    val loaders: Map<String, LoaderVariant>
+)
 
-        config.loaders.forEach { (loaderName, loader) ->
-            library(
-                if (isSingleLoader) "${id}_${mcVersion}"
-                else "${id}_${mcVersion}_$loaderName",
-                "maven.modrinth",
-                loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName, mcVersion))
+class MultiVersionDepBuilder(val id: String, val group: String) {
+    var artifact: String = id
+    var versionFormat: (String, String) -> String = { _, v -> v }
+
+    private val configs = mutableListOf<McVersionConfig>()
+
+    fun version(mcVersion: String, block: McVersionBuilder.() -> Unit) {
+        configs.add(McVersionBuilder(mcVersion).apply(block).build())
+    }
+
+    internal fun build() = MultiVersionDep(id, group, artifact, configs, versionFormat)
+}
+
+data class MultiVersionDep(
+    val id: String,
+    val group: String,
+    val artifact: String,
+    val configs: List<McVersionConfig>,
+    val versionFormat: (String, String) -> String
+)
+
+fun VersionCatalogBuilder.dependency(id: String, group: String, block: MultiVersionDepBuilder.() -> Unit) {
+    val dep = MultiVersionDepBuilder(id, group).apply(block).build()
+
+    val allLoaders = dep.configs.flatMap { it.loaders.keys }.toSet()
+    val isSingleLoader = allLoaders.size == 1
+    val isSingleMcVersion = dep.configs.size == 1
+
+    dep.configs.forEach { config ->
+        val version = dep.versionFormat(config.mcVersion, config.modVersion)
+        val mcVersionName = "mc${config.mcVersion.replace(".", "")}"
+
+        config.loaders.forEach { (loaderName, variant) ->
+            val finalArtifact = variant.artifactFormatter.format(dep.artifact, loaderName, config.mcVersion)
+            val finalVersion = variant.versionFormatter.format(config.mcVersion, version, loaderName)
+
+            val catalogId = when {
+                isSingleMcVersion && isSingleLoader -> dep.id
+                isSingleMcVersion -> "${dep.id}-$loaderName"
+                isSingleLoader -> "${dep.id}-$mcVersionName"
+                else -> "${dep.id}-$mcVersionName-$loaderName"
+            }
+
+            library(catalogId, dep.group, finalArtifact).version(finalVersion)
         }
     }
 }
 
-fun VersionCatalogBuilder.maven(
-    id: String,
-    group: String,
-    artifact: String = id,
-    mcVersionToVersion: Map<String, String>,
-    versionFormat: (String, String) -> String = { _, v -> v },
-    mapping: List<VariantMapping> = emptyList()
-) {
-    val allLoaders = mapping.flatMap { it.loaders.keys }.toSet()
-    val isSingleLoader = allLoaders.size == 1
-    val isSingleMcVersion = mcVersionToVersion.size == 1
-
-    if (isSingleMcVersion) {
-        val (mcVersion, modVersion) = mcVersionToVersion.entries.single()
-        val config = mapping.find { it.mcVersion == mcVersion }
-            ?: error("No loader config found for MC $mcVersion")
-
-        val version = versionFormat(mcVersion, modVersion)
-
-        config.loaders.forEach { (loaderName, loader) ->
-            library(
-                if (isSingleLoader) id
-                else "${id}_$loaderName",
-                group,
-                loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName, mcVersion))
-        }
-        return
-    }
-
-    mcVersionToVersion.forEach { (mcVersion, baseVersion) ->
-        val config = mapping.find { it.mcVersion == mcVersion }
-            ?: error("No loader config found for MC $mcVersion")
-
-        val version = versionFormat(mcVersion, baseVersion)
-
-        config.loaders.forEach { (loaderName, loader) ->
-            library(
-                if (mcVersion == "*") {
-                    if (isSingleLoader) id
-                    else "${id}_$loaderName"
-                } else {
-                    if (isSingleLoader) "${id}_${mcVersion}"
-                    else "${id}_${mcVersion}_$loaderName"
-                },
-                group,
-                loader.artifactTransformer(artifact, loaderName, mcVersion)
-            ).version(loader.versionTransformer(version, loaderName, mcVersion))
-        }
-    }
+@Suppress("SpellCheckingInspection")
+fun VersionCatalogBuilder.modrinth(id: String, block: MultiVersionDepBuilder.() -> Unit) {
+    dependency(id, "maven.modrinth", block)
 }
+
+// #endregion
+
+// #region Version Catalog
 
 dependencyResolutionManagement.versionCatalogs.create("catalog") {
-    maven(
-        id = "mixinextras",
-        group = "io.github.llamalad7",
-        artifact = "mixinextras",
-        mcVersionToVersion = mapOf("*" to "0.5.0"),
-        mapping = listOf(
-            VariantMapping(
-                "*", mapOf(
-                "forge" to VariantConfig(ArtifactTransformers.artifactDashLoader),
-                "fabric" to VariantConfig(ArtifactTransformers.artifactDashLoader),
-                "common" to VariantConfig(ArtifactTransformers.artifactDashLoader)
-            )
-            )
-        )
-    )
+    library("mixin-fabric", "net.fabricmc", "sponge-mixin")
+        .version("0.17.0+mixin.0.8.7")
+
+    dependency("mixinextras", "io.github.llamalad7") {
+        artifact = "mixinextras"
+
+        version("*") {
+            modVersion = "0.5.0"
+            loader("forge") { artifact(ArtifactFormatter.dashLoader) }
+            loader("fabric") { artifact(ArtifactFormatter.dashLoader) }
+            loader("common") { artifact(ArtifactFormatter.dashLoader) }
+        }
+    }
+
+    library("preloadingTricks", "settingdust.preloading_tricks", "PreloadingTricks")
+        .version("3.4.6")
+
+
+    dependency("klf", "dev.nyon") {
+        artifact = "KotlinLangForge"
+        versionFormat = { _, ver -> "2.11.2-k2.3.20-$ver" }
+
+        version("20") {
+            modVersion = "2.0"
+            loader("forge") { version(VersionFormatter.plusLoader) }
+        }
+
+        version("21") {
+            modVersion = "3.1"
+            loader("neoforge") { version(VersionFormatter.plusLoader) }
+        }
+
+        version("26") {
+            modVersion = "3.1"
+            loader("neoforge") { version(VersionFormatter.plusLoader) }
+        }
+    }
+
+    library("fabric-language-kotlin", "net.fabricmc","fabric-language-kotlin").version("1.13.10+kotlin.2.3.20")
 }
+
+// #endregion
+
+// #region Project Settings
 
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
 rootProject.name = "RegistryBlocker"
+
+// #endregion

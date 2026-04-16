@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier
+_commit: 0.1.8-58-g9cc7ebf
+_src_path: https://github.com/SettingDust/cloche-template
+author: SettingDust
+description: Blocking registries' entries from registration
+group: settingdust.registry_blocker
+has_service: false
+id: registry_blocker
+language: kotlin
+license: Apache License 2.0
+name: RegistryBlocker
+slug: registry-blocker

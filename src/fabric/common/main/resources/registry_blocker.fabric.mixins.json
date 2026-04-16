@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "settingdust.registry_blocker.fabric.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "registry_blocker.fabric.refmap.json",
+  "mixins": [
+  ],
+  "client": [
+  ]
+}

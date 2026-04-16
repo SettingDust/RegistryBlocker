@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "settingdust.registry_blocker.v21_1.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "registry_blocker.21_1.refmap.json",
+  "mixins": [
+    "MappedRegistryMixin",
+    "RegistryDataLoaderMixin"
+  ],
+  "client": [
+  ]
+}
