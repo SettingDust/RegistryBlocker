@@ -706,6 +706,7 @@ cloche {
             loaderVersion {
                 start = "1"
             }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -718,6 +719,11 @@ cloche {
             dependency {
                 modId = "preloading_tricks"
                 type = CommonMetadata.Dependency.Type.Recommended
+            }
+
+            dependency {
+                modId = "klf"
+                type = CommonMetadata.Dependency.Type.Required
             }
         }
 
@@ -759,6 +765,7 @@ cloche {
             loaderVersion {
                 start = "1"
             }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -770,6 +777,11 @@ cloche {
             dependency {
                 modId = "preloading_tricks"
                 type = CommonMetadata.Dependency.Type.Recommended
+            }
+
+            dependency {
+                modId = "klf"
+                type = CommonMetadata.Dependency.Type.Required
             }
         }
 
