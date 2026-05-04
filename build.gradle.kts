@@ -720,11 +720,6 @@ cloche {
                 modId = "preloading_tricks"
                 type = CommonMetadata.Dependency.Type.Recommended
             }
-
-            dependency {
-                modId = "klf"
-                type = CommonMetadata.Dependency.Type.Required
-            }
         }
 
         repositories {
@@ -777,11 +772,6 @@ cloche {
             dependency {
                 modId = "preloading_tricks"
                 type = CommonMetadata.Dependency.Type.Recommended
-            }
-
-            dependency {
-                modId = "klf"
-                type = CommonMetadata.Dependency.Type.Required
             }
         }
 
