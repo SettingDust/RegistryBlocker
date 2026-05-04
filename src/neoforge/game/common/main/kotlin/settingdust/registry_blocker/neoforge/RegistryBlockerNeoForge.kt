@@ -1,14 +1,14 @@
-package settingdust.registry_blocker.forge
+package settingdust.registry_blocker.neoforge
 
 import dev.nyon.klf.MOD_BUS
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.neoforged.fml.common.Mod
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent
 import settingdust.registry_blocker.RegistryBlocker
 import settingdust.registry_blocker.util.Entrypoint
 
 @Mod(RegistryBlocker.ID)
-object RegistryBlockerForge {
+object RegistryBlockerNeoForge {
     init {
         requireNotNull(RegistryBlocker)
         Entrypoint.construct()

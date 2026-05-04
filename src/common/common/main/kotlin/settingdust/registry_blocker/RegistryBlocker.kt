@@ -15,8 +15,8 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
 import org.apache.logging.log4j.LogManager
+import settingdust.registry_blocker.util.Identifier
 import settingdust.registry_blocker.util.LoaderAdapter
-import settingdust.registry_blocker.util.MinecraftAdapter
 import settingdust.registry_blocker.util.ServiceLoaderUtil
 
 object RegistryBlocker {
@@ -44,7 +44,7 @@ object RegistryBlocker {
         }
     }
 
-    fun id(path: String) = MinecraftAdapter.id(ID, path)
+    fun id(path: String) = Identifier(ID, path)
 }
 
 fun <T> MutableMap<T, Holder.Reference<T>>.removeIntrusiveValues(blocked: Map<ResourceKey<T>, T>) {
