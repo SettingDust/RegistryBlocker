@@ -15,9 +15,8 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
 import org.apache.logging.log4j.LogManager
-import settingdust.registry_blocker.util.Identifier
+import settingdust.registry_blocker.util.IdentifierFactory
 import settingdust.registry_blocker.util.LoaderAdapter
-import settingdust.registry_blocker.util.ServiceLoaderUtil
 
 object RegistryBlocker {
     const val ID = "registry_blocker"
@@ -38,13 +37,13 @@ object RegistryBlocker {
         config =
             CONFIG_CODEC.parse(JsonOps.INSTANCE, GsonHelper.parse(configPath.reader())).result()
                 .orElseThrow()
-        LoaderAdapter.onServerReload {
+        ServerReloadCallback.EVENT.register {
             config = CONFIG_CODEC.parse(JsonOps.INSTANCE, GsonHelper.parse(configPath.reader()))
                 .result().orElseThrow()
         }
     }
 
-    fun id(path: String) = Identifier(ID, path)
+    fun id(path: String) = IdentifierFactory.create(ID, path)
 }
 
 fun <T> MutableMap<T, Holder.Reference<T>>.removeIntrusiveValues(blocked: Map<ResourceKey<T>, T>) {

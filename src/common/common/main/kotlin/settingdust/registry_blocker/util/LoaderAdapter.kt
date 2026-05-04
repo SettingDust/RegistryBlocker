@@ -7,9 +7,9 @@ interface LoaderAdapter {
 
     val isClient: Boolean
 
+    val gameDir: Path
+
+    val configDir: Path get() = gameDir.resolve("config")
+
     fun isModLoaded(modId: String): Boolean
-
-    val configDir: Path
-
-    fun onServerReload(callback: () -> Unit)
 }
