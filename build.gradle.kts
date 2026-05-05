@@ -636,10 +636,7 @@ cloche {
                 type = CommonMetadata.Dependency.Type.Recommended
             }
 
-            custom(
-                "modmenu" to mapOf("parent" to "${id}_container"),
-                "fzzy_config" to listOf(id)
-            )
+            custom("fzzy_config" to listOf(id))
         }
     }
 
@@ -663,6 +660,8 @@ cloche {
                 modId = "fzzy_config"
                 type = CommonMetadata.Dependency.Type.Recommended
             }
+
+            custom("fzzy_config" to listOf(id))
         }
     }
 
@@ -739,6 +738,8 @@ cloche {
 
         dependencies {
             modImplementation(catalog.fzzy.config.mc1201.fabric)
+
+            modImplementation(catalog.modmenu.mc1201)
         }
     }
 
@@ -758,6 +759,8 @@ cloche {
 
         dependencies {
             modImplementation(catalog.fzzy.config.mc121.fabric)
+
+            modImplementation(catalog.modmenu.mc121)
         }
     }
 
@@ -777,6 +780,8 @@ cloche {
 
         dependencies {
             modImplementation(catalog.fzzy.config.mc261.fabric)
+
+            modImplementation(catalog.modmenu.mc261)
         }
     }
 
@@ -916,6 +921,7 @@ cloche {
                 metadata = objects.newInstance(FabricMetadata::class.java, fabric201).apply {
                     license.value(cloche.metadata.license)
                     dependencies.value(cloche.metadata.dependencies)
+                    custom("modmenu" to mapOf("parent" to id, "badages" to listOf("library")))
                 }
                 loaderDependencyVersion = "0.18"
                 output.set(metadataDirectory.map { it.file("fabric.mod.json") })

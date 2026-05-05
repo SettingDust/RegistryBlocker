@@ -1,23 +1,10 @@
 package settingdust.registry_blocker
 
-import com.mojang.serialization.Codec
-import com.mojang.serialization.JsonOps
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.iterator
-import kotlin.getValue
-import kotlin.io.path.div
-import kotlin.io.path.exists
-import kotlin.io.path.reader
-import kotlin.io.path.writeText
 import net.minecraft.core.Holder
 import net.minecraft.resources.ResourceKey
-import net.minecraft.util.GsonHelper
 import org.apache.logging.log4j.LogManager
-import settingdust.registry_blocker.util.CommonIdentifier
 import settingdust.registry_blocker.util.IdentifierAdapter
-import settingdust.registry_blocker.util.LoaderAdapter
-import settingdust.registry_blocker.util.ServerReloadCallback
+import settingdust.registry_blocker.util.RegistryBlockerConfig
 
 object RegistryBlocker {
     const val ID = "registry_blocker"
@@ -25,29 +12,14 @@ object RegistryBlocker {
     @JvmField
     val LOGGER = LogManager.getLogger()
 
-    val configPath by lazy {
-        (LoaderAdapter.configDir / "$ID.json").also {
-            if (!it.exists()) it.writeText("{}")
-        }
-    }
-
-    val CONFIG_CODEC = Codec.unboundedMap(IdentifierAdapter.codec, IdentifierAdapter.codec.listOf())
-    var config: Map<CommonIdentifier, List<CommonIdentifier>>
-
     init {
-        config =
-            CONFIG_CODEC.parse(JsonOps.INSTANCE, GsonHelper.parse(configPath.reader())).result()
-                .orElseThrow()
-        ServerReloadCallback.EVENT.register {
-            config = CONFIG_CODEC.parse(JsonOps.INSTANCE, GsonHelper.parse(configPath.reader()))
-                .result().orElseThrow()
-        }
+        requireNotNull(RegistryBlockerConfig)
     }
 
     fun id(path: String) = IdentifierAdapter.create(ID, path)
 }
 
-fun <T> MutableMap<T, Holder.Reference<T>>.removeIntrusiveValues(blocked: Map<ResourceKey<T>, T>) {
+fun <T : Any> MutableMap<T, Holder.Reference<T>>.removeIntrusiveValues(blocked: Map<ResourceKey<T>, T>) {
     for ((_, value) in blocked) {
         remove(value)
     }

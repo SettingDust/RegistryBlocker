@@ -11,6 +11,7 @@ import net.minecraft.server.packs.resources.Resource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import settingdust.registry_blocker.RegistryBlocker;
+import settingdust.registry_blocker.util.RegistryBlockerConfig;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class RegistryDataLoaderMixin {
         Iterator<Map.Entry<ResourceLocation, Resource>> original,
         @Local(argsOnly = true) ResourceKey<? extends Registry<E>> key
     ) {
-        var blacklist = RegistryBlocker.INSTANCE.getConfig().get(key.location());
+        var blacklist = RegistryBlockerConfig.Companion.getBlockedEntries().get(key.location());
         if (blacklist == null) return original;
         return Iterators.filter(
             original, it -> {

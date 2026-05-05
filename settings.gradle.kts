@@ -181,7 +181,47 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
     }
 
     library("fabric-language-kotlin", "net.fabricmc","fabric-language-kotlin").version("1.13.11+kotlin.2.3.21")
-    
+
+    dependency("modmenu", "com.terraformersmc") {
+        artifact = "modmenu"
+
+        version("1.20.1") {
+            modVersion = "7.2.2"
+            loader("fabric")
+        }
+
+        version("1.21") {
+            modVersion = "11.0.4"
+            loader("fabric")
+        }
+
+        version("26.1") {
+            modVersion = "18.0.0-alpha.8"
+            loader("fabric")
+        }
+    }
+
+    dependency("fzzy-config", "me.fzzyhmstrs") {
+        artifact = "fzzy_config"
+
+        version("1.20.1") {
+            modVersion = "0.7.6+1.20.1"
+            loader("fabric")
+            loader("forge") { version { _, version, loader -> "$version+$loader" } }
+        }
+
+        version("1.21") {
+            modVersion = "0.7.6+1.21"
+            loader("fabric")
+            loader("neoforge") { version { _, version, loader -> "$version+$loader" } }
+        }
+
+        version("26.1") {
+            modVersion = "0.7.6+26.1"
+            loader("fabric")
+            loader("neoforge") { version { _, version, loader -> "$version+$loader" } }
+        }
+    }
 }
 
 // #endregion

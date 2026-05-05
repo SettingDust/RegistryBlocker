@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import settingdust.registry_blocker.BlockingRegistry;
 import settingdust.registry_blocker.RegistryBlocker;
+import settingdust.registry_blocker.util.RegistryBlockerConfig;
 
 @Mixin(MappedRegistry.class)
 public abstract class MappedRegistryMixin<T> implements BlockingRegistry<T> {
@@ -27,8 +28,8 @@ public abstract class MappedRegistryMixin<T> implements BlockingRegistry<T> {
         final RegistrationInfo info,
         final Operation<Holder.Reference<T>> original
     ) {
-        if (RegistryBlocker.INSTANCE.getConfig().containsKey(this.key.location())
-            && RegistryBlocker.INSTANCE.getConfig().get(key.registry()).contains(key.location())) {
+        if (RegistryBlockerConfig.Companion.getBlockedEntries().containsKey(this.key.location())
+            && RegistryBlockerConfig.Companion.getBlockedEntries().get(key.registry()).contains(key.location())) {
             getRegistryblocker$blocked().put(key, entry);
             RegistryBlocker.LOGGER.debug("[MappedRegistry#register] Blocking registry entry: {}", key);
             return null;
