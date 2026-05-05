@@ -10,16 +10,9 @@ interface CommonIdentifier {
 
     companion object {
         fun of(namespace: String, path: String): CommonIdentifier =
-            IdentifierFactory.create(namespace, path)
+            IdentifierAdapter.create(namespace, path)
 
         fun parse(value: String): CommonIdentifier =
-            IdentifierFactory.parse(value)
+            IdentifierAdapter.parse(value)
     }
-}
-
-data class SimpleIdentifier(
-    override val namespace: String,
-    override val path: String,
-) : CommonIdentifier {
-    override fun toString(): String = "$namespace:$path"
 }

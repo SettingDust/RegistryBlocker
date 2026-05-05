@@ -12,10 +12,10 @@ import kotlin.io.path.reader
 import kotlin.io.path.writeText
 import net.minecraft.core.Holder
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
 import org.apache.logging.log4j.LogManager
-import settingdust.registry_blocker.util.IdentifierFactory
+import settingdust.registry_blocker.util.CommonIdentifier
+import settingdust.registry_blocker.util.IdentifierAdapter
 import settingdust.registry_blocker.util.LoaderAdapter
 
 object RegistryBlocker {
@@ -30,8 +30,8 @@ object RegistryBlocker {
         }
     }
 
-    val CONFIG_CODEC = Codec.unboundedMap(ResourceLocation.CODEC, ResourceLocation.CODEC.listOf())
-    var config: Map<ResourceLocation, List<ResourceLocation>>
+    val CONFIG_CODEC = Codec.unboundedMap(IdentifierAdapter.codec, IdentifierAdapter.codec.listOf())
+    var config: Map<CommonIdentifier, List<CommonIdentifier>>
 
     init {
         config =
@@ -43,7 +43,7 @@ object RegistryBlocker {
         }
     }
 
-    fun id(path: String) = IdentifierFactory.create(ID, path)
+    fun id(path: String) = IdentifierAdapter.create(ID, path)
 }
 
 fun <T> MutableMap<T, Holder.Reference<T>>.removeIntrusiveValues(blocked: Map<ResourceKey<T>, T>) {
