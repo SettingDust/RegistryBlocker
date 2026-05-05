@@ -28,6 +28,7 @@ import earth.terrarium.cloche.tasks.GenerateFabricModJson
 import earth.terrarium.cloche.util.fromJars
 import earth.terrarium.cloche.util.target
 import groovy.lang.Closure
+import java.nio.charset.StandardCharsets
 import net.msrandom.minecraftcodev.core.utils.lowerCamelCaseGradleName
 import net.msrandom.minecraftcodev.fabric.task.JarInJar
 import net.msrandom.minecraftcodev.forge.task.JarJar
@@ -35,10 +36,8 @@ import net.msrandom.minecraftcodev.includes.IncludesJar
 import net.msrandom.minecraftcodev.runs.MinecraftRunConfiguration
 import org.apache.tools.zip.ZipEntry
 import org.apache.tools.zip.ZipOutputStream
-import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.support.serviceOf
-import java.nio.charset.StandardCharsets
 
 plugins {
     java
@@ -106,6 +105,26 @@ repositories {
         name = "SettingDust's Maven"
     }
 
+    maven("https://maven.fzzyhmstrs.me/") {
+        name = "FzzyMaven"
+        content {
+            includeGroup("me.fzzyhmstrs")
+        }
+    }
+
+    maven("https://thedarkcolour.github.io/KotlinForForge/") {
+        content {
+            includeGroup("thedarkcolour")
+        }
+    }
+
+    maven("https://maven.terraformersmc.com/releases/") {
+        name = "TerraformersMC"
+        content {
+            includeGroup("com.terraformersmc")
+        }
+    }
+
     mavenCentral()
 
     cloche {
@@ -144,10 +163,16 @@ class ContainerScope(
             isTransitive = false
 
             attributes {
-                attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+                attribute(
+                    ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                    ArtifactTypeDefinition.JAR_TYPE,
+                )
                 attribute(REMAPPED_ATTRIBUTE, false)
                 attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
-                attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+                attribute(
+                    IncludeTransformationStateAttribute.ATTRIBUTE,
+                    IncludeTransformationStateAttribute.None,
+                )
             }
         }
 
@@ -158,15 +183,22 @@ class ContainerScope(
             isTransitive = false
 
             attributes {
-                attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+                attribute(
+                    ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                    ArtifactTypeDefinition.JAR_TYPE,
+                )
                 attribute(REMAPPED_ATTRIBUTE, true)
                 attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
-                attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+                attribute(
+                    IncludeTransformationStateAttribute.ATTRIBUTE,
+                    IncludeTransformationStateAttribute.None,
+                )
                 attribute(RemapNamespaceAttribute.ATTRIBUTE, RemapNamespaceAttribute.INITIAL)
             }
         }
 
-    private val embedConfigurations = mutableMapOf<String, NamedDomainObjectProvider<Configuration>>()
+    private val embedConfigurations =
+        mutableMapOf<String, NamedDomainObjectProvider<Configuration>>()
 
     val jarTask = project.tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "jar")) {
         group = "build"
@@ -189,7 +221,8 @@ class ContainerScope(
             dependsOn(includeJarTask, includeDevJarTask)
         }
 
-        val containerCapability = "${project.group}:${project.name}-$capabilitySuffix:${project.version}"
+        val containerCapability =
+            "${project.group}:${project.name}-$capabilitySuffix:${project.version}"
 
         project.configurations.register(lowerCamelCaseGradleName(featureName, "runtimeElements")) {
             isCanBeResolved = false
@@ -201,7 +234,12 @@ class ContainerScope(
             outgoing.capability(containerCapability)
         }
 
-        project.configurations.register(lowerCamelCaseGradleName(featureName, "devRuntimeElements")) {
+        project.configurations.register(
+            lowerCamelCaseGradleName(
+                featureName,
+                "devRuntimeElements",
+            ),
+        ) {
             isCanBeResolved = false
             isCanBeConsumed = true
             attributes {
@@ -215,10 +253,16 @@ class ContainerScope(
     private fun AttributeContainer.applyRuntimeVariantAttributes(remapped: Boolean) {
         attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage.JAVA_RUNTIME))
         attribute(Category.CATEGORY_ATTRIBUTE, project.objects.named(Category.LIBRARY))
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
+        attribute(
+            LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+            project.objects.named(LibraryElements.JAR),
+        )
         attribute(TargetAttributes.MOD_LOADER, loader)
         attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
-        attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+        attribute(
+            IncludeTransformationStateAttribute.ATTRIBUTE,
+            IncludeTransformationStateAttribute.None,
+        )
         attribute(REMAPPED_ATTRIBUTE, remapped)
         if (remapped) {
             attribute(RemapNamespaceAttribute.ATTRIBUTE, RemapNamespaceAttribute.INITIAL)
@@ -231,7 +275,12 @@ class ContainerScope(
         archiveClassifier: String = loader.toString().lowercase(),
         toIntermediateOutputs: Boolean = false,
     ): TaskProvider<out IncludesJar> = when (loader) {
-        MinecraftModLoader.fabric -> project.tasks.register<JarInJar>(lowerCamelCaseGradleName(featureName, name)) {
+        MinecraftModLoader.fabric -> project.tasks.register<JarInJar>(
+            lowerCamelCaseGradleName(
+                featureName,
+                name,
+            ),
+        ) {
             group = "build"
             this.archiveClassifier = archiveClassifier
             if (toIntermediateOutputs) {
@@ -256,19 +305,31 @@ class ContainerScope(
 
     private fun ModuleDependency.withIncludeAttributes() {
         attributes {
-            attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            attribute(
+                ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                ArtifactTypeDefinition.JAR_TYPE,
+            )
             attribute(REMAPPED_ATTRIBUTE, false)
             attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
-            attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+            attribute(
+                IncludeTransformationStateAttribute.ATTRIBUTE,
+                IncludeTransformationStateAttribute.None,
+            )
         }
     }
 
     private fun ModuleDependency.withIncludeDevAttributes() {
         attributes {
-            attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            attribute(
+                ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                ArtifactTypeDefinition.JAR_TYPE,
+            )
             attribute(REMAPPED_ATTRIBUTE, true)
             attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
-            attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+            attribute(
+                IncludeTransformationStateAttribute.ATTRIBUTE,
+                IncludeTransformationStateAttribute.None,
+            )
             attribute(RemapNamespaceAttribute.ATTRIBUTE, RemapNamespaceAttribute.INITIAL)
         }
     }
@@ -284,7 +345,7 @@ class ContainerScope(
         attributes {
             attribute(
                 LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-                project.objects.named(LibraryElements.CLASSES_AND_RESOURCES)
+                project.objects.named(LibraryElements.CLASSES_AND_RESOURCES),
             )
             attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
         }
@@ -292,14 +353,21 @@ class ContainerScope(
 
     private fun Configuration.applyTransformedJarAttributes() {
         attributes {
-            attribute(ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE, ArtifactTypeDefinition.JAR_TYPE)
+            attribute(
+                ArtifactTypeDefinition.ARTIFACT_TYPE_ATTRIBUTE,
+                ArtifactTypeDefinition.JAR_TYPE,
+            )
             attribute(REMAPPED_ATTRIBUTE, false)
             attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, true)
-            attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+            attribute(
+                IncludeTransformationStateAttribute.ATTRIBUTE,
+                IncludeTransformationStateAttribute.None,
+            )
         }
     }
 
-    inner class DependenciesScope(private val handler: DependencyHandler) : DependencyHandler by handler {
+    inner class DependenciesScope(private val handler: DependencyHandler) :
+        DependencyHandler by handler {
         private fun addTo(
             configuration: NamedDomainObjectProvider<Configuration>,
             dependencyNotation: Any,
@@ -312,16 +380,29 @@ class ContainerScope(
             return dependency
         }
 
-        fun include(dependencyNotation: Any, configure: ModuleDependency.() -> Unit = {}): Dependency? =
+        fun include(
+            dependencyNotation: Any,
+            configure: ModuleDependency.() -> Unit = {}
+        ): Dependency? =
             addTo(includeConfigurationProvider, dependencyNotation, configure)
 
-        fun includeDev(dependencyNotation: Any, configure: ModuleDependency.() -> Unit = {}): Dependency? =
+        fun includeDev(
+            dependencyNotation: Any,
+            configure: ModuleDependency.() -> Unit = {}
+        ): Dependency? =
             addTo(includeDevConfigurationProvider, dependencyNotation, configure)
 
-        fun embed(dependencyNotation: Any, configure: ModuleDependency.() -> Unit = {}): Dependency? =
+        fun embed(
+            dependencyNotation: Any,
+            configure: ModuleDependency.() -> Unit = {}
+        ): Dependency? =
             embed("", dependencyNotation, configure)
 
-        fun embed(name: String, dependencyNotation: Any, configure: ModuleDependency.() -> Unit = {}): Dependency? {
+        fun embed(
+            name: String,
+            dependencyNotation: Any,
+            configure: ModuleDependency.() -> Unit = {}
+        ): Dependency? {
             val configuration = embedConfigurations[name]
                 ?: throw IllegalArgumentException("embed('$name') is not registered for $featureName")
             return addTo(configuration, dependencyNotation, configure)
@@ -414,7 +495,10 @@ fun ClocheDependencyHandler.container(container: ContainerScope): Dependency =
 
         attributes {
             attribute(REMAPPED_ATTRIBUTE, true)
-            attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+            attribute(
+                IncludeTransformationStateAttribute.ATTRIBUTE,
+                IncludeTransformationStateAttribute.None,
+            )
         }
     }
 
@@ -521,6 +605,13 @@ cloche {
 
         includedClient()
 
+        dependencies {
+            fabricApi(minecraftVersion.map(String::fabricApiVersion))
+            modImplementation(catalog.fabric.language.kotlin)
+        }
+
+        if (isVersionTarget()) return@withType
+
         metadata {
             entrypoint("main") {
                 adapter = "kotlin"
@@ -531,6 +622,7 @@ cloche {
                 adapter = "kotlin"
                 value = "$group.fabric.RegistryBlockerFabric::clientInit"
             }
+
             dependency {
                 modId = "fabric-api"
                 type = CommonMetadata.Dependency.Type.Required
@@ -539,19 +631,65 @@ cloche {
                 modId = "fabric-language-kotlin"
                 type = CommonMetadata.Dependency.Type.Required
             }
-        }
-        dependencies {
-            fabricApi(minecraftVersion.map(String::fabricApiVersion))
-            modImplementation(catalog.fabric.language.kotlin)
+            dependency {
+                modId = "fzzy_config"
+                type = CommonMetadata.Dependency.Type.Recommended
+            }
+
+            custom(
+                "modmenu" to mapOf("parent" to "${id}_container"),
+                "fzzy_config" to listOf(id)
+            )
         }
     }
 
     targets.withType<ForgeTarget> {
         loaderVersion.set(minecraftVersion.map(String::forgeLoaderVersion))
+
+        if (isVersionTarget()) return@withType
+
+        metadata {
+            modLoader = "klf"
+            loaderVersion {
+                start = "1"
+            }
+
+            dependency {
+                modId = "preloading_tricks"
+                type = CommonMetadata.Dependency.Type.Recommended
+            }
+
+            dependency {
+                modId = "fzzy_config"
+                type = CommonMetadata.Dependency.Type.Recommended
+            }
+        }
     }
 
     targets.withType<NeoforgeTarget> {
         loaderVersion.set(minecraftVersion.map(String::neoForgeLoaderVersion))
+
+        if (isVersionTarget()) return@withType
+
+        metadata {
+            modLoader = "klf"
+
+            loaderVersion {
+                start = "1"
+            }
+
+            dependency {
+                modId = "preloading_tricks"
+                type = CommonMetadata.Dependency.Type.Recommended
+            }
+
+            dependency {
+                modId = "fzzy_config"
+                type = CommonMetadata.Dependency.Type.Recommended
+            }
+
+            custom("fzzy_config" to listOf(id))
+        }
     }
 
     targets.all {
@@ -564,7 +702,7 @@ cloche {
                 it.jvmArguments(
                     "-Dmixin.debug.verbose=true",
                     "-Dmixin.debug.export=true",
-                    "-Dclasstransform.dumpClasses=true"
+                    "-Dclasstransform.dumpClasses=true",
                 )
             }
         }
@@ -599,6 +737,9 @@ cloche {
             }
         }
 
+        dependencies {
+            modImplementation(catalog.fzzy.config.mc1201.fabric)
+        }
     }
 
     val fabric211 = fabric("fabric:21.1") {
@@ -615,6 +756,9 @@ cloche {
             }
         }
 
+        dependencies {
+            modImplementation(catalog.fzzy.config.mc121.fabric)
+        }
     }
 
     val fabric261 = fabric("fabric:26.1") {
@@ -630,6 +774,10 @@ cloche {
                 }
             }
         }
+
+        dependencies {
+            modImplementation(catalog.fzzy.config.mc261.fabric)
+        }
     }
 
     // endregion
@@ -640,10 +788,6 @@ cloche {
         minecraftVersion = "1.20.1"
 
         metadata {
-            modLoader = "klf"
-            loaderVersion {
-                start = "1"
-            }
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -651,11 +795,6 @@ cloche {
                     start = "1.20.1"
                     end = "1.21"
                 }
-            }
-
-            dependency {
-                modId = "preloading_tricks"
-                type = CommonMetadata.Dependency.Type.Recommended
             }
         }
 
@@ -672,13 +811,14 @@ cloche {
             compileOnly(catalog.mixinextras.common)
             implementation(catalog.mixinextras.forge)
             modImplementation(catalog.klf.mc20.forge)
+            modImplementation(catalog.fzzy.config.mc1201.forge)
         }
 
         tasks {
             named<Jar>(lowerCamelCaseGradleName(featureName, "jar")) {
                 manifest {
                     attributes(
-                        "ForgeVariant" to "LexForge"
+                        "ForgeVariant" to "LexForge",
                     )
                 }
             }
@@ -700,33 +840,26 @@ cloche {
         minecraftVersion = "1.21.1"
 
         metadata {
-            modLoader = "klf"
-            loaderVersion {
-                start = "1"
-            }
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
                 version {
                     start = "1.21"
+                    end = "1.22"
                 }
-            }
-
-            dependency {
-                modId = "preloading_tricks"
-                type = CommonMetadata.Dependency.Type.Recommended
             }
         }
 
         dependencies {
             modImplementation(catalog.klf.mc21.neoforge)
+            modImplementation(catalog.fzzy.config.mc121.neoforge)
         }
 
         tasks {
             named<Jar>(lowerCamelCaseGradleName(featureName, "jar")) {
                 manifest {
                     attributes(
-                        "ForgeVariant" to "NeoForge"
+                        "ForgeVariant" to "NeoForge",
                     )
                 }
             }
@@ -738,10 +871,6 @@ cloche {
         minecraftVersion = "26.1.2"
 
         metadata {
-            modLoader = "klf"
-            loaderVersion {
-                start = "1"
-            }
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -749,22 +878,18 @@ cloche {
                     start = "26.1"
                 }
             }
-
-            dependency {
-                modId = "preloading_tricks"
-                type = CommonMetadata.Dependency.Type.Recommended
-            }
         }
 
         dependencies {
             modImplementation(catalog.klf.mc26.neoforge)
+            modImplementation(catalog.fzzy.config.mc261.neoforge)
         }
 
         tasks {
             named<Jar>(lowerCamelCaseGradleName(featureName, "jar")) {
                 manifest {
                     attributes(
-                        "ForgeVariant" to "NeoForge"
+                        "ForgeVariant" to "NeoForge",
                     )
                 }
             }
@@ -781,7 +906,12 @@ cloche {
         val metadataDirectory = project.layout.buildDirectory.dir("generated")
             .map { it.dir("metadata").dir(featureName) }
         val generateModJson =
-            tasks.register<GenerateFabricModJson>(lowerCamelCaseGradleName(featureName, "generateModJson")) {
+            tasks.register<GenerateFabricModJson>(
+                lowerCamelCaseGradleName(
+                    featureName,
+                    "generateModJson",
+                ),
+            ) {
                 modId = "${id}_container"
                 metadata = objects.newInstance(FabricMetadata::class.java, fabric201).apply {
                     license.value(cloche.metadata.license)
@@ -815,7 +945,7 @@ cloche {
         jar {
             manifest {
                 attributes(
-                    "FMLModType" to "GAMELIBRARY"
+                    "FMLModType" to "GAMELIBRARY",
                 )
             }
         }
@@ -827,54 +957,68 @@ cloche {
 
     val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
 
-        val neoforgeMergedJar = tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedJar")) {
-            group = "build"
-            archiveClassifier = "${loader.toString().lowercase()}-merged"
-            destinationDirectory = intermediateOutputsDirectory
-            configurations = emptyList()
+        val neoforgeMergedJar =
+            tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedJar")) {
+                group = "build"
+                archiveClassifier = "${loader.toString().lowercase()}-merged"
+                destinationDirectory = intermediateOutputsDirectory
+                configurations = emptyList()
 
-            for (target in listOf(neoforgeGame261, neoforgeGame211)) {
-                val output = tasks.named<Jar>(target.includeJarTaskName).flatMap { it.archiveFile }
-                from(project.zipTree(output))
+                for (target in listOf(neoforgeGame261, neoforgeGame211)) {
+                    val output =
+                        tasks.named<Jar>(target.includeJarTaskName).flatMap { it.archiveFile }
+                    from(project.zipTree(output))
 
-                manifest.fromJars(serviceOf(), output)
+                    manifest.fromJars(serviceOf(), output)
+                }
+
+                mergeServiceFiles()
+                append("META-INF/accesstransformer.cfg")
+                transform(PreserveFirstFoundResourceTransformer::class.java)
             }
 
-            mergeServiceFiles()
-            append("META-INF/accesstransformer.cfg")
-            transform(PreserveFirstFoundResourceTransformer::class.java)
-        }
+        val neoforgeMergedDevJar =
+            tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedDevJar")) {
+                group = "build"
+                archiveClassifier = "${loader.toString().lowercase()}-merged-dev"
+                destinationDirectory = intermediateOutputsDirectory
+                configurations = emptyList()
 
-        val neoforgeMergedDevJar = tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedDevJar")) {
-            group = "build"
-            archiveClassifier = "${loader.toString().lowercase()}-merged-dev"
-            destinationDirectory = intermediateOutputsDirectory
-            configurations = emptyList()
+                for (target in listOf(neoforgeGame261, neoforgeGame211)) {
+                    val output = tasks.named<Jar>(target.jarTaskName).flatMap { it.archiveFile }
+                    from(project.zipTree(output))
 
-            for (target in listOf(neoforgeGame261, neoforgeGame211)) {
-                val output = tasks.named<Jar>(target.jarTaskName).flatMap { it.archiveFile }
-                from(project.zipTree(output))
+                    manifest.fromJars(serviceOf(), output)
+                }
 
-                manifest.fromJars(serviceOf(), output)
+                mergeServiceFiles()
+                append("META-INF/accesstransformer.cfg")
+                transform(PreserveFirstFoundResourceTransformer::class.java)
             }
-
-            mergeServiceFiles()
-            append("META-INF/accesstransformer.cfg")
-            transform(PreserveFirstFoundResourceTransformer::class.java)
-        }
 
         val mergedRuntimeElements =
-            configurations.register(lowerCamelCaseGradleName(featureName, "mergedRuntimeElements")) {
+            configurations.register(
+                lowerCamelCaseGradleName(
+                    featureName,
+                    "mergedRuntimeElements",
+                ),
+            ) {
                 isCanBeResolved = false
                 isCanBeConsumed = true
 
                 attributes {
                     attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
                     attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                    attribute(
+                        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+                        objects.named(LibraryElements.JAR),
+                    )
                     attribute(TargetAttributes.MOD_LOADER, loader)
                     attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
-                    attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+                    attribute(
+                        IncludeTransformationStateAttribute.ATTRIBUTE,
+                        IncludeTransformationStateAttribute.None,
+                    )
                     attribute(REMAPPED_ATTRIBUTE, false)
                 }
 
@@ -882,17 +1026,28 @@ cloche {
             }
 
         val mergedDevRuntimeElements =
-            configurations.register(lowerCamelCaseGradleName(featureName, "mergedDevRuntimeElements")) {
+            configurations.register(
+                lowerCamelCaseGradleName(
+                    featureName,
+                    "mergedDevRuntimeElements",
+                ),
+            ) {
                 isCanBeResolved = false
                 isCanBeConsumed = true
 
                 attributes {
                     attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
                     attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                    attribute(
+                        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+                        objects.named(LibraryElements.JAR),
+                    )
                     attribute(TargetAttributes.MOD_LOADER, loader)
                     attribute(INCLUDE_TRANSFORMED_OUTPUT_ATTRIBUTE, false)
-                    attribute(IncludeTransformationStateAttribute.ATTRIBUTE, IncludeTransformationStateAttribute.None)
+                    attribute(
+                        IncludeTransformationStateAttribute.ATTRIBUTE,
+                        IncludeTransformationStateAttribute.None,
+                    )
                     attribute(REMAPPED_ATTRIBUTE, true)
                     attribute(RemapNamespaceAttribute.ATTRIBUTE, RemapNamespaceAttribute.INITIAL)
                 }
@@ -908,7 +1063,7 @@ cloche {
         jar {
             manifest {
                 attributes(
-                    "FMLModType" to "GAMELIBRARY"
+                    "FMLModType" to "GAMELIBRARY",
                 )
             }
         }
@@ -931,6 +1086,8 @@ cloche {
             modRuntimeOnly(skipIncludeTransformation(project(":"))) {
                 isTransitive = false
             }
+            modRuntimeOnly(catalog.fzzy.config.mc1201.fabric)
+            modRuntimeOnly(catalog.modmenu.mc1201)
         }
     }
 
@@ -943,6 +1100,8 @@ cloche {
             modRuntimeOnly(skipIncludeTransformation(project(":"))) {
                 isTransitive = false
             }
+            modRuntimeOnly(catalog.fzzy.config.mc121.fabric)
+            modRuntimeOnly(catalog.modmenu.mc121)
         }
     }
 
@@ -955,6 +1114,8 @@ cloche {
             modRuntimeOnly(skipIncludeTransformation(project(":"))) {
                 isTransitive = false
             }
+            modRuntimeOnly(catalog.fzzy.config.mc261.fabric)
+            modRuntimeOnly(catalog.modmenu.mc261)
         }
     }
 
@@ -979,6 +1140,8 @@ cloche {
             modRuntimeOnly(project(":")) {
                 isTransitive = false
             }
+
+            modRuntimeOnly(catalog.fzzy.config.mc1201.forge)
 
             legacyClasspath(catalog.preloadingTricks) {
                 isTransitive = false
@@ -1006,6 +1169,8 @@ cloche {
                 isTransitive = false
             }
 
+            modRuntimeOnly(catalog.fzzy.config.mc121.neoforge)
+
             legacyClasspath(catalog.preloadingTricks) {
                 isTransitive = false
             }
@@ -1027,6 +1192,8 @@ cloche {
             modRuntimeOnly(project(":")) {
                 isTransitive = false
             }
+
+            modRuntimeOnly(catalog.fzzy.config.mc261.neoforge)
 
             legacyClasspath(catalog.preloadingTricks) {
                 isTransitive = false
@@ -1167,7 +1334,10 @@ cloche {
                         outgoing.variants.create("remapped") {
                             attributes {
                                 attribute(REMAPPED_ATTRIBUTE, true)
-                                attribute(RemapNamespaceAttribute.ATTRIBUTE, RemapNamespaceAttribute.INITIAL)
+                                attribute(
+                                    RemapNamespaceAttribute.ATTRIBUTE,
+                                    RemapNamespaceAttribute.INITIAL,
+                                )
                             }
                             artifact(shadowMergedDevJar)
                         }
@@ -1186,7 +1356,7 @@ cloche {
                 testTargets.forEach { target ->
                     for (variant in listOf(
                         "${target.featureName}ApiElements",
-                        "${target.featureName}RuntimeElements"
+                        "${target.featureName}RuntimeElements",
                     )) {
                         configurations.named(variant) {
                             withVariantsFromConfiguration(this) {
