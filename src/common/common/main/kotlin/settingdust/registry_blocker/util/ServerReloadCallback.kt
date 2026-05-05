@@ -1,6 +1,4 @@
-package settingdust.registry_blocker
-
-import settingdust.registry_blocker.util.Event
+package settingdust.registry_blocker.util
 
 fun interface ServerReloadCallback {
     companion object {

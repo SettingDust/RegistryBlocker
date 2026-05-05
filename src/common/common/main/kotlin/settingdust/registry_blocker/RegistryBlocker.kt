@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager
 import settingdust.registry_blocker.util.CommonIdentifier
 import settingdust.registry_blocker.util.IdentifierAdapter
 import settingdust.registry_blocker.util.LoaderAdapter
+import settingdust.registry_blocker.util.ServerReloadCallback
 
 object RegistryBlocker {
     const val ID = "registry_blocker"
