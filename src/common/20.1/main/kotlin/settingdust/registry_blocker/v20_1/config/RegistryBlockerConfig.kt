@@ -2,10 +2,9 @@ package settingdust.registry_blocker.v20_1.config
 
 import me.fzzyhmstrs.fzzy_config.api.FileType
 import me.fzzyhmstrs.fzzy_config.config.Config
-import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedIdentifierMap
-import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.core.registries.Registries
+import settingdust.registry_blocker.util.ValidatedDynamicMap
+import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
 import net.minecraft.resources.ResourceLocation
 import settingdust.registry_blocker.RegistryBlocker
 import settingdust.registry_blocker.util.CommonIdentifier
@@ -16,11 +15,15 @@ class RegistryBlockerConfig : Config(
     folder = "",
     name = RegistryBlocker.ID,
 ), IRegistryBlockerConfig {
-    var blockedRegistries: ValidatedIdentifierMap<List<ResourceLocation>> =
-        ValidatedIdentifierMap(
+    var blockedRegistries: ValidatedDynamicMap<ResourceLocation, List<ResourceLocation>> =
+        ValidatedDynamicMap(
             mapOf(),
-            ValidatedIdentifier.ofRegistry(Registries.ITEM.location(), BuiltInRegistries.REGISTRY),
-            ValidatedIdentifier().toList(),
+            ValidatedIdentifier.ofRegistry(ResourceLocation("minecraft", "item"), BuiltInRegistries.REGISTRY),
+            { key ->
+                val registry = BuiltInRegistries.REGISTRY.get(key)
+                if (registry != null) ValidatedIdentifier.ofRegistry(ResourceLocation("minecraft", "air"), registry).toList()
+                else ValidatedIdentifier().toList()
+            }
         )
 
     override fun fileType(): FileType = FileType.JSON5

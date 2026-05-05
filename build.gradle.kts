@@ -575,8 +575,11 @@ cloche {
         mixins.from(file("src/common/common/main/resources/$id.mixins.json"))
         // accessWideners.from(file("src/common/common/main/resources/$id.accessWidener"))
 
-        dependencies {
+        project.dependencies {
+            val compileOnly = configurations.getByName(sourceSet.compileOnlyConfigurationName)
+
             compileOnly("org.spongepowered:mixin:0.8.7")
+            compileOnly(catalog.tomlkt)
         }
     }
 
@@ -737,6 +740,7 @@ cloche {
         }
 
         dependencies {
+            compileOnly(catalog.tomlkt)
             modImplementation(catalog.fzzy.config.mc1201.fabric)
 
             modImplementation(catalog.modmenu.mc1201)
@@ -758,6 +762,7 @@ cloche {
         }
 
         dependencies {
+            compileOnly(catalog.tomlkt)
             modImplementation(catalog.fzzy.config.mc121.fabric)
 
             modImplementation(catalog.modmenu.mc121)
@@ -779,6 +784,7 @@ cloche {
         }
 
         dependencies {
+            compileOnly(catalog.tomlkt)
             modImplementation(catalog.fzzy.config.mc261.fabric)
 
             modImplementation(catalog.modmenu.mc261)
@@ -812,6 +818,7 @@ cloche {
         }
 
         dependencies {
+            compileOnly(catalog.tomlkt)
             implementation("org.spongepowered:mixin:0.8.7")
             compileOnly(catalog.mixinextras.common)
             implementation(catalog.mixinextras.forge)
@@ -856,6 +863,7 @@ cloche {
         }
 
         dependencies {
+            compileOnly(catalog.tomlkt)
             modImplementation(catalog.klf.mc21.neoforge)
             modImplementation(catalog.fzzy.config.mc121.neoforge)
         }
@@ -886,6 +894,7 @@ cloche {
         }
 
         dependencies {
+            compileOnly(catalog.tomlkt)
             modImplementation(catalog.klf.mc26.neoforge)
             modImplementation(catalog.fzzy.config.mc261.neoforge)
         }

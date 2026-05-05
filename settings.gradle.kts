@@ -201,6 +201,8 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         }
     }
 
+    library("tomlkt", "net.peanuuutz.tomlkt", "tomlkt").version("0.3.7")
+
     dependency("fzzy-config", "me.fzzyhmstrs") {
         artifact = "fzzy_config"
 

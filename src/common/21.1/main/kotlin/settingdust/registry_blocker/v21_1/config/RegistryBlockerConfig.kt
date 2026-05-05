@@ -2,7 +2,8 @@ package settingdust.registry_blocker.v21_1.config
 
 import me.fzzyhmstrs.fzzy_config.api.FileType
 import me.fzzyhmstrs.fzzy_config.config.Config
-import me.fzzyhmstrs.fzzy_config.validation.collection.ValidatedIdentifierMap
+import net.minecraft.core.registries.BuiltInRegistries
+import settingdust.registry_blocker.util.ValidatedDynamicMap
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
 import net.minecraft.resources.ResourceLocation
 import settingdust.registry_blocker.RegistryBlocker
@@ -14,11 +15,15 @@ class RegistryBlockerConfig : Config(
     folder = "",
     name = RegistryBlocker.ID
 ), IRegistryBlockerConfig {
-    var blockedRegistries: ValidatedIdentifierMap<List<ResourceLocation>> =
-        ValidatedIdentifierMap(
+    var blockedRegistries: ValidatedDynamicMap<ResourceLocation, List<ResourceLocation>> =
+        ValidatedDynamicMap(
             mapOf(),
-            ValidatedIdentifier(),
-            ValidatedIdentifier().toList()
+            ValidatedIdentifier.ofRegistry(ResourceLocation.fromNamespaceAndPath("minecraft", "item"), BuiltInRegistries.REGISTRY),
+            { key ->
+                val registry = BuiltInRegistries.REGISTRY.get(key)
+                if (registry != null) ValidatedIdentifier.ofRegistry(ResourceLocation.fromNamespaceAndPath("minecraft", "air"), registry).toList()
+                else ValidatedIdentifier().toList()
+            }
         )
 
     override fun fileType(): FileType = FileType.JSON5
