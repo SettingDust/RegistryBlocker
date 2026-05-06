@@ -5,14 +5,12 @@ package settingdust.registry_blocker.util
 import me.fzzyhmstrs.fzzy_config.entry.Entry
 import me.fzzyhmstrs.fzzy_config.entry.EntryOpener
 import me.fzzyhmstrs.fzzy_config.entry.EntryValidator
-import me.fzzyhmstrs.fzzy_config.screen.widget.LayoutWidget
 import me.fzzyhmstrs.fzzy_config.screen.widget.PopupWidget
 import me.fzzyhmstrs.fzzy_config.screen.widget.TextureIds
 import me.fzzyhmstrs.fzzy_config.screen.widget.custom.CustomButtonWidget
 import me.fzzyhmstrs.fzzy_config.util.ValidationResult
 import me.fzzyhmstrs.fzzy_config.util.ValidationResult.Companion.attachTo
 import me.fzzyhmstrs.fzzy_config.validation.ValidatedLazyField
-import me.fzzyhmstrs.fzzy_config.validation.collection.MapListWidget
 import me.fzzyhmstrs.fzzy_config.validation.misc.ChoiceValidator
 import net.minecraft.client.gui.components.AbstractWidget
 import net.peanuuutz.tomlkt.TomlElement
@@ -157,7 +155,7 @@ open class ValidatedDynamicMap<K, V>(
         if (input !is Map<*, *>) return false
         return try {
             validateEntry(input as Map<K, V>, EntryValidator.ValidationType.STRONG).isValid()
-        } catch (e: Throwable) {
+        } catch (_: Throwable) {
             false
         }
     }
@@ -177,33 +175,11 @@ open class ValidatedDynamicMap<K, V>(
         xPosition: BiFunction<Int, Int, Int> = PopupWidget.Builder.center(),
         yPosition: BiFunction<Int, Int, Int> = PopupWidget.Builder.center()
     ) {
-        try {
-            val map = storedValue.map {
-                Pair(
-                    (keyHandler.instanceEntry() as Entry<K, *>).also { entry -> entry.accept(it.key) },
-                    (valueHandlerFactory(it.key).instanceEntry() as Entry<V, *>).also { entry -> entry.accept(it.value) }
-                )
-            }.associate { it }
-
-            val defaultValueHandler = valueHandlerFactory(keyHandler.get())
-
-            val choiceValidator: BiFunction<MapListWidget<K, V>, MapListWidget.MapEntry<K, V>?, ChoiceValidator<K>> =
-                BiFunction { ll, le -> MapListWidget.ExcludeSelfChoiceValidator(le) { self -> ll.getRawMap(self) } }
-
-            val mapWidget = MapListWidget(map, keyHandler, defaultValueHandler, choiceValidator)
-
-            val popup = PopupWidget.Builder(this.translation())
-                .add("map", mapWidget, LayoutWidget.Position.BELOW, LayoutWidget.Position.ALIGN_LEFT)
-                .addDoneWidget()
-                .onClose { this.setAndUpdate(mapWidget.getMap()) }
-                .positionX(xPosition)
-                .positionY(yPosition)
-                .build()
-
-            PopupWidget.push(popup)
-        } catch (e: Throwable) {
-            e.printStackTrace()
-        }
+        DynamicMapPopupFactory.openPopup(
+            storedValue, keyHandler, valueHandlerFactory,
+            this.translation(), { this.setAndUpdate(it) },
+            xPosition, yPosition
+        )
     }
 
     //client
