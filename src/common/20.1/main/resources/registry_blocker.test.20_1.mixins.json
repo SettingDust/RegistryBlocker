@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "settingdust.registry_blocker.fabric.v20_1.test.mixin",
+  "package": "settingdust.registry_blocker.v20_1.test.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BuiltInRegistriesMixin"

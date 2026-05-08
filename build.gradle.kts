@@ -586,14 +586,17 @@ cloche {
     val common201 = common("common:20.1") {
         dependsOn(commonMain)
         mixins.from("src/common/20.1/main/resources/$id.20_1.mixins.json")
+        mixins.from("src/common/20.1/main/resources/$id.test.20_1.mixins.json")
     }
     val common211 = common("common:21.1") {
         dependsOn(commonMain)
         mixins.from("src/common/21.1/main/resources/$id.21_1.mixins.json")
+        mixins.from("src/common/21.1/main/resources/$id.test.21_1.mixins.json")
     }
     val common261 = common("common:26.1") {
         dependsOn(commonMain)
         mixins.from("src/common/26.1/main/resources/$id.26_1.mixins.json")
+        mixins.from("src/common/26.1/main/resources/$id.test.26_1.mixins.json")
     }
 
     // endregion
@@ -728,14 +731,6 @@ cloche {
         dependsOn(common201, fabricCommon)
         minecraftVersion = "1.20.1"
 
-        test {
-            mixins.from("src/fabric/20.1/test/resources/registry_blocker.test.20_1.mixins.json")
-        }
-
-        runs {
-            test()
-        }
-
         metadata {
             entrypoint("fabric-gametest") {
                 adapter = "kotlin"
@@ -764,14 +759,6 @@ cloche {
         dependsOn(common211, fabricCommon)
         minecraftVersion = "1.21.1"
 
-        test {
-            mixins.from("src/fabric/21.1/test/resources/registry_blocker.test.21_1.mixins.json")
-        }
-
-        runs {
-            test()
-        }
-
         metadata {
             entrypoint("fabric-gametest") {
                 adapter = "kotlin"
@@ -798,14 +785,6 @@ cloche {
     val fabric261 = fabric("fabric:26.1") {
         dependsOn(common261, fabricCommon)
         minecraftVersion = "26.1.2"
-
-        test {
-            mixins.from("src/fabric/26.1/test/resources/registry_blocker.test.26_1.mixins.json")
-        }
-
-        runs {
-            test()
-        }
 
         metadata {
             entrypoint("fabric-gametest") {

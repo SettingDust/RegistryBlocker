@@ -57,7 +57,7 @@ class DynamicMapPopupFactory : DynamicMapPopupFactory {
 
             val popup = PopupWidget.Builder(title)
                 .add("map", mapWidget, LayoutWidget.Position.BELOW, LayoutWidget.Position.ALIGN_LEFT)
-                .addDoneButton()
+                .addDoneWidget()
                 .onClose { onClose(mapWidget.getMap()) }
                 .positionX(xPosition)
                 .positionY(yPosition)
@@ -165,6 +165,9 @@ internal class DynamicMapListWidget<K, V>(
             this.addEntry(DynamicExistingEntry(e.key, e.value, this, valueHandlerFactory, entryValidator))
         }
         this.addEntry(DynamicNewEntry(keySupplier, valueHandlerFactory, this, entryValidator))
+
+        setRenderBackground(false)
+        setRenderTopAndBottom(false)
     }
 
     private class DynamicExistingEntry<K, V>(

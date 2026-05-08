@@ -200,7 +200,7 @@ internal class DynamicMapListWidget<K, V>(
         }
 
         override fun mouseClicked(click: MouseButtonEvent, doubled: Boolean): Boolean {
-            getChildAt(click.x, click.y).ifPresentOrElse({ clickedWidget = it }, { clickedWidget = null })
+            getChildAt(click.x(), click.y()).ifPresentOrElse({ clickedWidget = it }, { clickedWidget = null })
             return super.mouseClicked(click, doubled)
         }
 
