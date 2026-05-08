@@ -155,7 +155,7 @@ open class ValidatedDynamicMap<K, V>(
         if (input !is Map<*, *>) return false
         return try {
             validateEntry(input as Map<K, V>, EntryValidator.ValidationType.STRONG).isValid()
-        } catch (_: Throwable) {
+        } catch (e: Throwable) {
             false
         }
     }

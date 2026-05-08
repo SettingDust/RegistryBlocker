@@ -4,6 +4,7 @@
   "package": "settingdust.registry_blocker.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BuiltInRegistriesAccessor"
   ],
   "client": [
   ]

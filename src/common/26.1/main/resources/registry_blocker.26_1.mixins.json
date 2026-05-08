@@ -4,7 +4,10 @@
   "package": "settingdust.registry_blocker.v26_1.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "IdentifierMixin"
+    "IdentifierMixin",
+    "MappedRegistryMixin",
+    "PendingRegistrationAccessor",
+    "RegistryLoadTaskMixin"
   ],
   "client": [
   ]

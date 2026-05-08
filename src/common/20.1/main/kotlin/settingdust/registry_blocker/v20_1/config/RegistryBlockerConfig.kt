@@ -2,33 +2,44 @@ package settingdust.registry_blocker.v20_1.config
 
 import me.fzzyhmstrs.fzzy_config.api.FileType
 import me.fzzyhmstrs.fzzy_config.config.Config
-import net.minecraft.core.registries.BuiltInRegistries
-import settingdust.registry_blocker.util.ValidatedDynamicMap
+import me.fzzyhmstrs.fzzy_config.util.AllowableIdentifiers
 import me.fzzyhmstrs.fzzy_config.validation.minecraft.ValidatedIdentifier
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import settingdust.registry_blocker.RegistryBlocker
+import settingdust.registry_blocker.mixin.BuiltInRegistriesAccessor
 import settingdust.registry_blocker.util.CommonIdentifier
 import settingdust.registry_blocker.util.RegistryBlockerConfig as IRegistryBlockerConfig
+import settingdust.registry_blocker.util.ValidatedDynamicMap
 
 class RegistryBlockerConfig : Config(
     ResourceLocation(RegistryBlocker.ID, RegistryBlocker.ID),
     folder = "",
     name = RegistryBlocker.ID,
 ), IRegistryBlockerConfig {
-    var blockedRegistries: ValidatedDynamicMap<ResourceLocation, List<ResourceLocation>> =
+    @Suppress("UNCHECKED_CAST")
+    override var blockedEntries =
         ValidatedDynamicMap(
-            mapOf(),
-            ValidatedIdentifier.ofRegistry(ResourceLocation("minecraft", "item"), BuiltInRegistries.REGISTRY),
-            { key ->
-                val registry = BuiltInRegistries.REGISTRY.get(key)
-                if (registry != null) ValidatedIdentifier.ofRegistry(ResourceLocation("minecraft", "air"), registry).toList()
-                else ValidatedIdentifier().toList()
+            hashMapOf(),
+            ValidatedIdentifier.ofRegistry(
+                ResourceLocation("minecraft", "item"),
+                BuiltInRegistriesAccessor.getRootRegistry(),
+            ),
+        ) { key ->
+            val registry = BuiltInRegistries.REGISTRY.get(key)
+            if (registry != null) {
+                ValidatedIdentifier(
+                    ResourceLocation("minecraft", "air"),
+                    AllowableIdentifiers(
+                        { true },
+                        { registry.keySet().toList() },
+                        true,
+                    ),
+                ).toList()
+            } else {
+                ValidatedIdentifier().toList()
             }
-        )
+        } as ValidatedDynamicMap<CommonIdentifier, List<CommonIdentifier>>
 
     override fun fileType(): FileType = FileType.JSON5
-
-    @Suppress("UNCHECKED_CAST")
-    override val blockedEntries: Map<CommonIdentifier, List<CommonIdentifier>>
-        get() = blockedRegistries.get() as Map<CommonIdentifier, List<CommonIdentifier>>
 }

@@ -7,5 +7,5 @@ interface RegistryBlockerConfig {
     companion object :
         RegistryBlockerConfig by ConfigApi.registerAndLoadConfig({ ServiceLoaderUtil.findService<RegistryBlockerConfig>() as Config }) as RegistryBlockerConfig
 
-    val blockedEntries: Map<CommonIdentifier, List<CommonIdentifier>>
+    val blockedEntries: ValidatedDynamicMap<CommonIdentifier, List<CommonIdentifier>>
 }

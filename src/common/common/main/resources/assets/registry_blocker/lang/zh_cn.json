@@ -1,5 +1,5 @@
 {
   "registry_blocker.registry_blocker": "注册表屏蔽器",
-  "registry_blocker.registry_blocker.blockedRegistries": "屏蔽的注册表项",
-  "registry_blocker.registry_blocker.blockedRegistries.desc": "注册表标识符到需要屏蔽的条目标识符列表的映射"
+  "registry_blocker.registry_blocker.blockedEntries": "屏蔽的注册表项",
+  "registry_blocker.registry_blocker.blockedEntries.desc": "注册表标识符到需要屏蔽的条目标识符列表的映射"
 }

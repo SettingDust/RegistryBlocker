@@ -1,5 +1,5 @@
 {
   "registry_blocker.registry_blocker": "Registry Blocker",
-  "registry_blocker.registry_blocker.blockedRegistries": "Blocked Registries",
-  "registry_blocker.registry_blocker.blockedRegistries.desc": "A map of registry identifiers to lists of entry identifiers to block from those registries"
+  "registry_blocker.registry_blocker.blockedEntries": "Blocked Registries",
+  "registry_blocker.registry_blocker.blockedEntries.desc": "A map of registry identifiers to lists of entry identifiers to block from those registries"
 }

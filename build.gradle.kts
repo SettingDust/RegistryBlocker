@@ -46,7 +46,7 @@ plugins {
     kotlin("plugin.serialization") version "2.3.20"
     id("com.palantir.git-version") version "5.0.0"
     id("com.gradleup.shadow") version "9.4.1"
-    id("earth.terrarium.cloche") version "0.18.11-dust.16"
+    id("earth.terrarium.cloche") version "0.18.11-dust.17"
 }
 
 // region Project Properties
@@ -728,7 +728,20 @@ cloche {
         dependsOn(common201, fabricCommon)
         minecraftVersion = "1.20.1"
 
+        test {
+            mixins.from("src/fabric/20.1/test/resources/registry_blocker.test.20_1.mixins.json")
+        }
+
+        runs {
+            test()
+        }
+
         metadata {
+            entrypoint("fabric-gametest") {
+                adapter = "kotlin"
+                value = "$group.fabric.v20_1.test.RegistryBlockerGameTest"
+            }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -751,7 +764,20 @@ cloche {
         dependsOn(common211, fabricCommon)
         minecraftVersion = "1.21.1"
 
+        test {
+            mixins.from("src/fabric/21.1/test/resources/registry_blocker.test.21_1.mixins.json")
+        }
+
+        runs {
+            test()
+        }
+
         metadata {
+            entrypoint("fabric-gametest") {
+                adapter = "kotlin"
+                value = "$group.fabric.v21_1.test.RegistryBlockerGameTest"
+            }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -773,7 +799,20 @@ cloche {
         dependsOn(common261, fabricCommon)
         minecraftVersion = "26.1.2"
 
+        test {
+            mixins.from("src/fabric/26.1/test/resources/registry_blocker.test.26_1.mixins.json")
+        }
+
+        runs {
+            test()
+        }
+
         metadata {
+            entrypoint("fabric-gametest") {
+                adapter = "kotlin"
+                value = "$group.fabric.v26_1.test.RegistryBlockerGameTest"
+            }
+
             dependency {
                 modId = "minecraft"
                 type = CommonMetadata.Dependency.Type.Required
@@ -1008,7 +1047,7 @@ cloche {
 
                 mergeServiceFiles()
                 append("META-INF/accesstransformer.cfg")
-                transform(PreserveFirstFoundResourceTransformer::class.java)
+                transform<PreserveFirstFoundResourceTransformer>()
             }
 
         val mergedRuntimeElements =

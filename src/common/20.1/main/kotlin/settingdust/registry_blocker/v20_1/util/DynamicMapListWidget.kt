@@ -45,8 +45,8 @@ class DynamicMapPopupFactory : DynamicMapPopupFactory {
         try {
             val map = storedValue.map {
                 Pair(
-                    keyHandler.instanceEntry().also { entry -> entry.accept(it.key) },
-                    valueHandlerFactory(it.key).instanceEntry().also { entry -> entry.accept(it.value) }
+                    (keyHandler.instanceEntry() as Entry1<K, *>).also { entry -> entry.accept(it.key) },
+                    (valueHandlerFactory(it.key).instanceEntry() as Entry1<V, *>).also { entry -> entry.accept(it.value) }
                 )
             }.associate { it }
 
@@ -57,7 +57,7 @@ class DynamicMapPopupFactory : DynamicMapPopupFactory {
 
             val popup = PopupWidget.Builder(title)
                 .add("map", mapWidget, LayoutWidget.Position.BELOW, LayoutWidget.Position.ALIGN_LEFT)
-                .addDoneWidget()
+                .addDoneButton()
                 .onClose { onClose(mapWidget.getMap()) }
                 .positionX(xPosition)
                 .positionY(yPosition)
@@ -78,11 +78,6 @@ internal class DynamicMapListWidget<K, V>(
 ) : ContainerObjectSelectionList<DynamicMapListWidget.DynamicMapEntry<K, V>>(
     Minecraft.getInstance(), 268, 160, 0, 160, 22
 ), SuggestionWindowListener, LayoutElement {
-
-    init {
-        this.setRenderBackground(false)
-        this.setRenderTopAndBottom(false)
-    }
 
     private var suggestionWindowElement: GuiEventListener? = null
 
@@ -120,10 +115,21 @@ internal class DynamicMapListWidget<K, V>(
     override fun getY(): Int = this.y0
     override fun getWidth(): Int = this.width
     override fun getHeight(): Int = this.height
-    override fun getRectangle(): ScreenRectangle = super<LayoutElement>.getRectangle()
-    override fun setX(x: Int) { this.x0 = x; this.x1 = x + this.width }
-    override fun setY(y: Int) { this.y0 = y; this.y1 = y + this.height }
-    override fun visitWidgets(consumer: java.util.function.Consumer<AbstractWidget>) {}
+
+    override fun setX(x: Int) {
+        this.x0 = x
+        this.x1 = x + this.width
+    }
+
+    override fun setY(y: Int) {
+        this.y0 = y
+        this.y1 = y + this.height
+    }
+
+    override fun getRectangle(): ScreenRectangle = ScreenRectangle(this.x0, this.y0, this.width, this.height)
+
+    override fun visitWidgets(consumer: java.util.function.Consumer<AbstractWidget>) {
+    }
 
     override fun getRowLeft(): Int {
         return this.x0

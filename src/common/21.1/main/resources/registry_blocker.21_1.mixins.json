@@ -4,6 +4,8 @@
   "package": "settingdust.registry_blocker.v21_1.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "MappedRegistryMixin",
+    "RegistryDataLoaderMixin",
     "ResourceLocationMixin"
   ],
   "client": [

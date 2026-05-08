@@ -5,6 +5,7 @@ interface Entrypoint {
         private val services by lazy { ServiceLoaderUtil.findServices<Entrypoint>(required = false) }
 
         override fun construct() {
+            requireNotNull(RegistryBlockerConfig)
             services.forEach { it.construct() }
         }
 
