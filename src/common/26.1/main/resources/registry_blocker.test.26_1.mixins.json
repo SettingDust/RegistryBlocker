@@ -1,8 +1,9 @@
 {
   "required": true,
   "minVersion": "0.8",
+  "plugin": "settingdust.registry_blocker.mixin.MinecraftVersionMixinPlugin",
   "package": "settingdust.registry_blocker.v26_1.test.mixin",
-  "compatibilityLevel": "JAVA_25",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "BuiltInRegistriesMixin"
   ],

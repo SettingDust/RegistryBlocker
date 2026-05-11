@@ -9,6 +9,11 @@ class LoaderAdapter : LoaderAdapter {
     override val isClient: Boolean
         get() = NeoForgeAdapter.dist.isClient
 
+    override val isGameTest = System.getProperty("neoforge.enabledGameTestNamespaces") != null ||
+        System.getProperties().stringPropertyNames().any {
+            it.equals("neoforge.enabledGameTestNamespaces", ignoreCase = true)
+        }
+
     override val gameDir: Path = FMLPaths.GAMEDIR.get()
 
     override val configDir: Path = FMLPaths.CONFIGDIR.get()

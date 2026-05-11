@@ -17,6 +17,7 @@ import earth.terrarium.cloche.api.attributes.RemapNamespaceAttribute
 import earth.terrarium.cloche.api.attributes.TargetAttributes
 import earth.terrarium.cloche.api.metadata.CommonMetadata
 import earth.terrarium.cloche.api.metadata.FabricMetadata
+import earth.terrarium.cloche.api.metadata.ForgeMetadata
 import earth.terrarium.cloche.api.target.FabricTarget
 import earth.terrarium.cloche.api.target.ForgeLikeTarget
 import earth.terrarium.cloche.api.target.ForgeTarget
@@ -25,6 +26,7 @@ import earth.terrarium.cloche.api.target.NeoforgeTarget
 import earth.terrarium.cloche.api.target.compilation.ClocheDependencyHandler
 import earth.terrarium.cloche.target.LazyConfigurableInternal
 import earth.terrarium.cloche.tasks.GenerateFabricModJson
+import earth.terrarium.cloche.tasks.GenerateForgeModsToml
 import earth.terrarium.cloche.util.fromJars
 import earth.terrarium.cloche.util.target
 import groovy.lang.Closure
@@ -940,8 +942,9 @@ cloche {
         val generateModJson =
             tasks.register<GenerateFabricModJson>(
                 lowerCamelCaseGradleName(
+                    "generate",
                     featureName,
-                    "generateModJson",
+                    "ModJson",
                 ),
             ) {
                 modId = "${id}_container"
@@ -989,37 +992,62 @@ cloche {
     // region NeoForge Container
 
     val neoforgeContainer = container(loader = MinecraftModLoader.neoforge) {
+        val metadataDirectory = project.layout.buildDirectory.dir("generated")
+            .map { it.dir("metadata").dir(featureName) }
+        val generateModToml =
+            tasks.register<GenerateForgeModsToml>(
+                lowerCamelCaseGradleName(
+                    "generate",
+                    featureName,
+                    "ModsToml",
+                ),
+            ) {
+                modId = cloche.metadata.modId
+                metadata = objects.newInstance(ForgeMetadata::class.java, neoforgeGame211).apply {
+                    modLoader = neoforgeGame211.metadata.modLoader
+                    name = cloche.metadata.name
+                    description = cloche.metadata.description
+                    icon = cloche.metadata.icon
+                    authors = cloche.metadata.authors
+                    license = cloche.metadata.license
+                    issues = cloche.metadata.issues
+                    custom = neoforgeGame211.metadata.custom
+                    dependencies = neoforgeGame211.metadata.dependencies.map { dependencies ->
+                        dependencies.filter { it.modId.get() != "minecraft" }
+                    }
+                    dependency {
+                        modId = "minecraft"
+                        version {
+                            start = "1.21"
+                            end = "26.2"
+                        }
+                    }
+                }
+                loaderDependencyVersion = neoforgeGame211.metadata.loaderVersion
+                loaderName = neoforgeGame211.loaderName
+                neoforge = true
+                mixinConfigs = files(neoforgeGame211.mixins, neoforgeGame261.mixins)
+
+                output.set(metadataDirectory.map { it.file("META-INF/neoforge.mods.toml") })
+            }
 
         val neoforgeMergedJar =
             tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedJar")) {
+                dependsOn(generateModToml)
+
                 group = "build"
                 archiveClassifier = "${loader.toString().lowercase()}-merged"
                 destinationDirectory = intermediateOutputsDirectory
                 configurations = emptyList()
 
-                for (target in listOf(neoforgeGame261, neoforgeGame211)) {
+                from(metadataDirectory)
+
+                for (target in listOf(neoforgeGame211, neoforgeGame261)) {
                     val output =
                         tasks.named<Jar>(target.includeJarTaskName).flatMap { it.archiveFile }
-                    from(project.zipTree(output))
-
-                    manifest.fromJars(serviceOf(), output)
-                }
-
-                mergeServiceFiles()
-                append("META-INF/accesstransformer.cfg")
-                transform(PreserveFirstFoundResourceTransformer::class.java)
-            }
-
-        val neoforgeMergedDevJar =
-            tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedDevJar")) {
-                group = "build"
-                archiveClassifier = "${loader.toString().lowercase()}-merged-dev"
-                destinationDirectory = intermediateOutputsDirectory
-                configurations = emptyList()
-
-                for (target in listOf(neoforgeGame261, neoforgeGame211)) {
-                    val output = tasks.named<Jar>(target.jarTaskName).flatMap { it.archiveFile }
-                    from(project.zipTree(output))
+                    from(project.zipTree(output)) {
+                        exclude("META-INF/neoforge.mods.toml")
+                    }
 
                     manifest.fromJars(serviceOf(), output)
                 }
@@ -1027,6 +1055,33 @@ cloche {
                 mergeServiceFiles()
                 append("META-INF/accesstransformer.cfg")
                 transform<PreserveFirstFoundResourceTransformer>()
+                filesMatching("**/*.class") { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
+            }
+
+        val neoforgeMergedDevJar =
+            tasks.register<ShadowJar>(lowerCamelCaseGradleName(featureName, "mergedDevJar")) {
+                dependsOn(generateModToml)
+
+                group = "build"
+                archiveClassifier = "${loader.toString().lowercase()}-merged-dev"
+                destinationDirectory = intermediateOutputsDirectory
+                configurations = emptyList()
+
+                from(metadataDirectory)
+
+                for (target in listOf(neoforgeGame211, neoforgeGame261)) {
+                    val output = tasks.named<Jar>(target.jarTaskName).flatMap { it.archiveFile }
+                    from(project.zipTree(output)) {
+                        exclude("META-INF/neoforge.mods.toml")
+                    }
+
+                    manifest.fromJars(serviceOf(), output)
+                }
+
+                mergeServiceFiles()
+                append("META-INF/accesstransformer.cfg")
+                transform<PreserveFirstFoundResourceTransformer>()
+                filesMatching("**/*.class") { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
             }
 
         val mergedRuntimeElements =
@@ -1162,6 +1217,7 @@ cloche {
         runs {
             client {
                 env("MOD_CLASSES", "")
+                jvmArguments("-Dforge.enabledGameTestNamespaces=$id")
             }
         }
 
@@ -1170,17 +1226,22 @@ cloche {
         }
 
         dependencies {
+            runtimeOnly(catalog.mixinextras.forge)
+
             modRuntimeOnly(project(":")) {
                 isTransitive = false
             }
 
             modRuntimeOnly(catalog.fzzy.config.mc1201.forge)
+            runtimeOnly("thedarkcolour:kotlinforforge:4.12.0")
 
             legacyClasspath(catalog.preloadingTricks) {
                 isTransitive = false
             }
 
-            legacyClasspath(catalog.klf.mc20.forge)
+            runtimeOnly(catalog.klf.mc20.forge)
+            legacyClasspath(catalog.klfxkff)
+            compileOnly(catalog.klfxkff)
         }
     }
 
@@ -1194,6 +1255,7 @@ cloche {
         runs {
             client {
                 env("MOD_CLASSES", "")
+                jvmArguments("-Dneoforge.enabledGameTestNamespaces=$id")
             }
         }
 
@@ -1208,7 +1270,7 @@ cloche {
                 isTransitive = false
             }
 
-            legacyClasspath(catalog.klf.mc21.neoforge)
+            modRuntimeOnly(catalog.klf.mc21.neoforge)
         }
     }
 
@@ -1218,21 +1280,26 @@ cloche {
         runs {
             client {
                 env("MOD_CLASSES", "")
+                jvmArguments("-Dneoforge.enabledGameTestNamespaces=$id")
             }
         }
 
         dependencies {
             modRuntimeOnly(project(":")) {
                 isTransitive = false
+
+                attributes {
+                    attribute(REMAPPED_ATTRIBUTE, true)
+                }
             }
 
             modRuntimeOnly(catalog.fzzy.config.mc261.neoforge)
 
-            legacyClasspath(catalog.preloadingTricks) {
+            runtimeOnly(catalog.preloadingTricks) {
                 isTransitive = false
             }
 
-            legacyClasspath(catalog.klf.mc26.neoforge)
+            modRuntimeOnly(catalog.klf.mc26.neoforge)
         }
     }
 
@@ -1304,6 +1371,7 @@ cloche {
 
             transform<ForgeMetadataTransformer>()
             transform<PreserveFirstFoundResourceTransformer>()
+            filesMatching("**/*.class") { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
         }
 
         val shadowMergedJar by registering(ShadowJar::class) {
@@ -1322,6 +1390,7 @@ cloche {
 
             transform<ForgeMetadataTransformer>()
             transform<PreserveFirstFoundResourceTransformer>()
+            filesMatching("**/*.class") { duplicatesStrategy = DuplicatesStrategy.EXCLUDE }
         }
 
         val shadowSourcesJar by registering(ShadowJar::class) {

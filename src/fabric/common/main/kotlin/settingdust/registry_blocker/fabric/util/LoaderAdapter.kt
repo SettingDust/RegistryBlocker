@@ -8,6 +8,8 @@ import settingdust.registry_blocker.util.LoaderAdapter
 class LoaderAdapter : LoaderAdapter {
     override val isClient = FabricLoader.getInstance().environmentType === EnvType.CLIENT
 
+    override val isGameTest = System.getProperty("fabric-api.gametest") != null
+
     override val gameDir: Path = FabricLoader.getInstance().gameDir
 
     override val configDir: Path = FabricLoader.getInstance().configDir

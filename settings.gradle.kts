@@ -24,7 +24,8 @@ fun interface ArtifactFormatter {
     companion object {
         val simple = ArtifactFormatter { artifact, _, _ -> artifact }
         val dashLoader = ArtifactFormatter { artifact, loader, _ -> "$artifact-$loader" }
-        val dashLoaderMc = ArtifactFormatter { artifact, loader, mcVersion -> "$artifact-$loader-$mcVersion" }
+        val dashLoaderMc =
+            ArtifactFormatter { artifact, loader, mcVersion -> "$artifact-$loader-$mcVersion" }
     }
 }
 
@@ -105,7 +106,11 @@ data class MultiVersionDep(
     val versionFormat: (String, String) -> String
 )
 
-fun VersionCatalogBuilder.dependency(id: String, group: String, block: MultiVersionDepBuilder.() -> Unit) {
+fun VersionCatalogBuilder.dependency(
+    id: String,
+    group: String,
+    block: MultiVersionDepBuilder.() -> Unit
+) {
     val dep = MultiVersionDepBuilder(id, group).apply(block).build()
 
     val allLoaders = dep.configs.flatMap { it.loaders.keys }.toSet()
@@ -117,8 +122,10 @@ fun VersionCatalogBuilder.dependency(id: String, group: String, block: MultiVers
         val mcVersionName = "mc${config.mcVersion.replace(".", "")}"
 
         config.loaders.forEach { (loaderName, variant) ->
-            val finalArtifact = variant.artifactFormatter.format(dep.artifact, loaderName, config.mcVersion)
-            val finalVersion = variant.versionFormatter.format(config.mcVersion, version, loaderName)
+            val finalArtifact =
+                variant.artifactFormatter.format(dep.artifact, loaderName, config.mcVersion)
+            val finalVersion =
+                variant.versionFormatter.format(config.mcVersion, version, loaderName)
 
             val catalogId = when {
                 isSingleMcVersion && isSingleLoader -> dep.id
@@ -157,7 +164,7 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
     }
 
     library("preloadingTricks", "settingdust.preloading_tricks", "PreloadingTricks")
-        .version("3.5.12")
+        .version("3.6.0")
 
 
     dependency("klf", "dev.nyon") {
@@ -180,7 +187,11 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
         }
     }
 
-    library("fabric-language-kotlin", "net.fabricmc","fabric-language-kotlin").version("1.13.11+kotlin.2.3.21")
+    library(
+        "fabric-language-kotlin",
+        "net.fabricmc",
+        "fabric-language-kotlin",
+    ).version("1.13.11+kotlin.2.3.21")
 
     dependency("modmenu", "com.terraformersmc") {
         artifact = "modmenu"
@@ -222,6 +233,15 @@ dependencyResolutionManagement.versionCatalogs.create("catalog") {
             modVersion = "0.7.6+26.1"
             loader("fabric")
             loader("neoforge") { version { _, version, loader -> "$version+$loader" } }
+        }
+    }
+
+    modrinth("klfxkff") {
+        artifact = "klf-x-kff"
+
+        version("1.20.1") {
+            modVersion = "0.2.0"
+            loader("forge")
         }
     }
 }

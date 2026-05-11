@@ -26,7 +26,7 @@ class RegistryBlockerConfig : Config(
                 BuiltInRegistriesAccessor.getRootRegistry(),
             ),
         ) { key ->
-            val registry = BuiltInRegistries.REGISTRY.get(key)
+            val registry = BuiltInRegistriesAccessor.getRootRegistry().get(key)
             if (registry != null) {
                 ValidatedIdentifier(
                     ResourceLocation("minecraft", "air"),

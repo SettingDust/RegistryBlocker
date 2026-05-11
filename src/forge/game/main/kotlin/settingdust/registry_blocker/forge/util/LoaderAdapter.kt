@@ -10,6 +10,11 @@ class LoaderAdapter : LoaderAdapter {
     override val isClient: Boolean
         get() = FMLLoader.getDist().isClient
 
+    override val isGameTest = System.getProperty("forge.enabledGameTestNamespaces") != null ||
+        System.getProperties().stringPropertyNames().any {
+            it.equals("forge.enabledGameTestNamespaces", ignoreCase = true)
+        }
+
     override val gameDir: Path = FMLPaths.GAMEDIR.get()
 
     override val configDir: Path = FMLPaths.CONFIGDIR.get()

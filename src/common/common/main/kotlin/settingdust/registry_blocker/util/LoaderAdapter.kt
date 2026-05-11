@@ -7,6 +7,8 @@ interface LoaderAdapter {
 
     val isClient: Boolean
 
+    val isGameTest: Boolean
+
     val gameDir: Path
 
     val configDir: Path get() = gameDir.resolve("config")
