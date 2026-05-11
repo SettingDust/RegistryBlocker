@@ -1,4 +1,27 @@
 
+## [0.8.0] - 2026-05-11
+### :sparkles: New Features
+- [`6ed3365`](https://github.com/SettingDust/RegistryBlocker/commit/6ed3365453386e811be4cabd53ae40db01a7624c) - ServerReloadCallback work *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`a60c349`](https://github.com/SettingDust/RegistryBlocker/commit/a60c34936fdd97c17fdb7beefc7f4ae0d9bb2466) - add fzzy config for ingame config *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`585ff68`](https://github.com/SettingDust/RegistryBlocker/commit/585ff6862d56956dc6c67b036a3af47ac28ee1e3) - add gametest for forge platforms *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+### :bug: Bug Fixes
+- [`c710446`](https://github.com/SettingDust/RegistryBlocker/commit/c710446d10300a78d39d442fed87e9350e1f4833) - value handler don't refresh after changed key *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+### :recycle: Refactors
+- [`8b34d4d`](https://github.com/SettingDust/RegistryBlocker/commit/8b34d4d6698a04ae00d4497bfd19f678684090f6) - apply copier template *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`2ef2029`](https://github.com/SettingDust/RegistryBlocker/commit/2ef2029611cc17150b8d030082c1e4c5619194ec) - copier from template *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`a69df84`](https://github.com/SettingDust/RegistryBlocker/commit/a69df848d0a7698966e18087cff22fcc4a4bb3b7) - copier from template for identifier *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`f8e4450`](https://github.com/SettingDust/RegistryBlocker/commit/f8e44502f8c86b6f366b51d9a88e7954e9141e88) - remove simple identifier & add codec *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`0fad507`](https://github.com/SettingDust/RegistryBlocker/commit/0fad5078ed7e38cf3af2785d0466a14480874d3d) - update blockedRegistries to use ValidatedDynamicMap *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`df832fe`](https://github.com/SettingDust/RegistryBlocker/commit/df832fe366984aa8fe83df396413c128dac1ff9b) - workinnnnnng *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`183b272`](https://github.com/SettingDust/RegistryBlocker/commit/183b2726fc094eb250efce987e873cf3203fabae) - move gametest to main sourceset *(commit by [@SettingDust](https://github.com/SettingDust))*
+- [`a7a9ec7`](https://github.com/SettingDust/RegistryBlocker/commit/a7a9ec70492af589ab92d35f7241a57d0cacace2) - replace pre-filter mixins with register mixin for all versions *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+### :wrench: Chores
+- [`ccd148d`](https://github.com/SettingDust/RegistryBlocker/commit/ccd148d5c074a228f7b21f4fd81aa6cf03569bbc) - add new icon *(commit by [@SettingDust](https://github.com/SettingDust))*
+
+
 ## [0.7.1] - 2025-09-15
 ### :bug: Bug Fixes
 - [`a709918`](https://github.com/SettingDust/RegistryBlocker/commit/a70991879a52c80f1132d75accb67c7f934b1f2b) - avoid crash when blocking element *(commit by [@SettingDust](https://github.com/SettingDust))*
@@ -78,3 +101,4 @@
 [0.6.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.5.4...0.6.0
 [0.7.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.6.0...0.7.0
 [0.7.1]: https://github.com/SettingDust/RegistryBlocker/compare/0.7.0...0.7.1
+[0.8.0]: https://github.com/SettingDust/RegistryBlocker/compare/0.7.1...0.8.0
